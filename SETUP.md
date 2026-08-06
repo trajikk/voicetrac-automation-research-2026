@@ -29,3 +29,11 @@ Worker is running
 Note: `npm run worker:start` itself blocks in the foreground after spawning
 the detached daemon — use `npm run worker:status` in a separate shell (or
 after a few seconds) to confirm it's up.
+
+## Claude Code setup
+
+Separately from vendoring `claude-mem`, this repo is also set up to be
+worked on with Claude Code itself. See `INSTALL.md` for CLI install steps,
+`CLAUDE.md` for project instructions, and `.github/workflows/claude.yml` /
+`.github/workflows/claude-code-review.yml` for the GitHub issue/PR
+integration.
