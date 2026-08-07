@@ -1,35 +1,40 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Nav } from "@/components/Nav";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  subsets: ["latin"],
+  axes: ["opsz", "SOFT", "WONK"],
+  style: ["normal", "italic"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
-const siteUrl = "https://originvisibility.com";
+const siteUrl = "https://getorigin.ai";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Origin Visibility — AI Search Visibility, SEO & Website Rebuilds",
-    template: "%s — Origin Visibility",
-  },
+  title: "Origin — AI Visibility & Web for Contractors",
   description:
-    "Origin Visibility helps businesses become the answer AI gives. We combine complete website rebuilds, traditional SEO, and AI search (GEO) visibility so you're found by both search engines and answer engines like ChatGPT and Perplexity.",
+    "Origin makes sure your trade business is the name AI gives out when someone asks ChatGPT or Perplexity who to call — then builds you a site fast and sharp enough to close the job.",
   openGraph: {
-    title: "Origin Visibility — AI Search Visibility, SEO & Website Rebuilds",
+    title: "Origin — AI Visibility & Web for Contractors",
     description:
-      "Be the answer AI gives. Website rebuilds, SEO, and GEO strategy built for how people search now.",
+      "Someone just asked AI who to call. Was your name in the answer? Origin builds AI visibility and websites for contractors, concrete, and fencing businesses.",
     url: siteUrl,
-    siteName: "Origin Visibility",
+    siteName: "Origin",
     type: "website",
   },
 };
@@ -38,10 +43,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <Nav />
+        <Header />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

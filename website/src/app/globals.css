@@ -1,57 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #08090b;
-  --foreground: #f2f1ec;
-  --surface: #101216;
-  --surface-2: #16181d;
-  --border: #24272e;
-  --muted: #9a9ba3;
-  --gold: #f2b544;
-  --gold-soft: #f2b54426;
-  --cyan: #57e0d1;
-  --cyan-soft: #57e0d126;
+  --background: #0a0e1a;
+  --background-deep: #060911;
+  --foreground: #f3efe6;
+  --surface: #111729;
+  --surface-2: #161d33;
+  --border: #232c47;
+  --border-soft: #1a2138;
+  --muted: #94a0bd;
+  --muted-2: #5f6a89;
+
+  --ember: #cf8a4b;
+  --ember-bright: #e7a668;
+  --ember-soft: rgba(207, 138, 75, 0.14);
+  --ember-line: rgba(207, 138, 75, 0.35);
+
+  --signal: #6f9c98;
+  --signal-soft: rgba(111, 156, 152, 0.14);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-deep: var(--background-deep);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
   --color-muted: var(--muted);
-  --color-gold: var(--gold);
-  --color-gold-soft: var(--gold-soft);
-  --color-cyan: var(--cyan);
-  --color-cyan-soft: var(--cyan-soft);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted-2: var(--muted-2);
+  --color-ember: var(--ember);
+  --color-ember-bright: var(--ember-bright);
+  --color-ember-soft: var(--ember-soft);
+  --color-ember-line: var(--ember-line);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: var(--gold-soft);
+  background: var(--ember-soft);
   color: var(--foreground);
 }
 
-.text-gradient {
-  background-image: linear-gradient(90deg, var(--gold), var(--cyan));
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-tech {
+  font-family: var(--font-mono);
+}
+
+.text-gradient-ember {
+  background-image: linear-gradient(100deg, var(--ember-bright), var(--ember) 65%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.grid-fade {
+.field-grid {
   background-image:
-    linear-gradient(to bottom, transparent, var(--background) 85%),
-    linear-gradient(to right, rgba(242, 241, 236, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(242, 241, 236, 0.06) 1px, transparent 1px);
+    linear-gradient(to bottom, transparent, var(--background) 88%),
+    linear-gradient(to right, rgba(243, 239, 230, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(243, 239, 230, 0.05) 1px, transparent 1px);
   background-size:
     100% 100%,
-    48px 48px,
-    48px 48px;
+    56px 56px,
+    56px 56px;
+}
+
+.noise-veil {
+  position: relative;
+}
+
+.noise-veil::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.06) 1px,
+    transparent 0
+  );
+  background-size: 3px 3px;
 }

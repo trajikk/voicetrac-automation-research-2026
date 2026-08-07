@@ -1,81 +1,58 @@
-import Link from "next/link";
-import { Container } from "./Container";
 import { Logo } from "./Logo";
-import { services } from "@/lib/services";
+import { Container } from "./Container";
+
+const navLinks = [
+  { href: "#services", label: "Services" },
+  { href: "#process", label: "How It Works" },
+  { href: "#faq", label: "FAQ" },
+  { href: "#contact", label: "Contact" },
+];
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface/40">
-      <Container className="grid gap-10 py-14 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
-        <div className="max-w-sm">
+    <footer className="border-t border-border-soft bg-background-deep">
+      <Container className="flex flex-col gap-10 py-14 md:flex-row md:items-start md:justify-between">
+        <div>
           <Logo />
-          <p className="mt-4 text-sm leading-relaxed text-muted">
-            Origin Visibility helps businesses become the answer&nbsp;&mdash;
-            rebuilding websites and search presence so you show up in AI
-            answers and search results alike.
+          <p className="mt-3 text-sm text-muted">Origin — AI Visibility &amp; Web</p>
+        </div>
+
+        <nav className="flex flex-wrap gap-x-8 gap-y-3" aria-label="Footer">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm text-foreground/75 transition-colors hover:text-ember-bright"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="space-y-1.5 text-sm text-muted">
+          <p>
+            <a href="mailto:hello@getorigin.ai" className="transition-colors hover:text-ember-bright">
+              hello@getorigin.ai
+            </a>
           </p>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Services</h3>
-          <ul className="mt-4 space-y-3">
-            {services.map((service) => (
-              <li key={service.slug}>
-                <Link
-                  href={`/services#${service.slug}`}
-                  className="text-sm text-muted transition-colors hover:text-gold"
-                >
-                  {service.shortName}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Company</h3>
-          <ul className="mt-4 space-y-3">
-            <li>
-              <Link href="/about" className="text-sm text-muted transition-colors hover:text-gold">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/services" className="text-sm text-muted transition-colors hover:text-gold">
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="text-sm text-muted transition-colors hover:text-gold">
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Get in touch</h3>
-          <ul className="mt-4 space-y-3 text-sm text-muted">
-            <li>
-              <a href="mailto:hello@originvisibility.com" className="transition-colors hover:text-gold">
-                hello@originvisibility.com
-              </a>
-            </li>
-            <li>
-              <a href="tel:+18005550119" className="transition-colors hover:text-gold">
-                (800) 555-0119
-              </a>
-            </li>
-          </ul>
+          <p>
+            <a href="tel:+17205550148" className="transition-colors hover:text-ember-bright">
+              (720) 555-0148
+            </a>
+          </p>
+          <p>Denver, CO</p>
         </div>
       </Container>
 
-      <div className="border-t border-border">
-        <Container className="flex flex-col items-center justify-between gap-3 py-6 text-xs text-muted sm:flex-row">
-          <p>&copy; {year} Origin Visibility. All rights reserved.</p>
-          <p>AI search visibility, SEO &amp; website rebuilds.</p>
+      <div className="border-t border-border-soft">
+        <Container className="flex flex-col gap-3 py-6 text-xs leading-relaxed text-muted-2 sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; {year} Origin. All rights reserved.</p>
+          <p className="max-w-xl sm:text-right">
+            Origin is not affiliated with Google, OpenAI, Anthropic, or Perplexity.
+            AI visibility can be improved but never guaranteed by any provider.
+          </p>
         </Container>
       </div>
     </footer>
