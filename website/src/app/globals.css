@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #08090b;
+  --foreground: #f2f1ec;
+  --surface: #101216;
+  --surface-2: #16181d;
+  --border: #24272e;
+  --muted: #9a9ba3;
+  --gold: #f2b544;
+  --gold-soft: #f2b54426;
+  --cyan: #57e0d1;
+  --cyan-soft: #57e0d126;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-cyan: var(--cyan);
+  --color-cyan-soft: var(--cyan-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: var(--gold-soft);
+  color: var(--foreground);
+}
+
+.text-gradient {
+  background-image: linear-gradient(90deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-fade {
+  background-image:
+    linear-gradient(to bottom, transparent, var(--background) 85%),
+    linear-gradient(to right, rgba(242, 241, 236, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(242, 241, 236, 0.06) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    48px 48px,
+    48px 48px;
+}
