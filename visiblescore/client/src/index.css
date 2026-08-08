@@ -1,0 +1,153 @@
+:root {
+  --purple: #6d5ff5;
+  --purple-dark: #4b3ff0;
+  --pink: #f3d9ec;
+  --ink: #1a1a2e;
+  --muted: #6b6b80;
+  --border: #ececf7;
+  --bg-soft: #f7f6fd;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: #faf9ff;
+  color: var(--ink);
+}
+
+.app-shell { min-height: 100vh; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #4b3ff0, #8a5ff5 60%, #f5a8db);
+  color: white;
+}
+.topbar .logo { font-weight: 800; font-size: 18px; letter-spacing: -0.01em; }
+.topbar a { color: white; text-decoration: none; opacity: 0.9; font-size: 13px; }
+
+.container { max-width: 1080px; margin: 0 auto; padding: 32px; }
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(20, 20, 50, 0.04);
+}
+
+.grid-clients { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
+
+.client-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(160deg, #fbfaff 0%, #ffffff 70%);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.client-card:hover { box-shadow: 0 4px 16px rgba(80, 60, 200, 0.12); transform: translateY(-1px); }
+.client-card .name { font-weight: 700; font-size: 16px; }
+.client-card .domain { color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.client-card .score-pill {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--purple-dark);
+}
+
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+.muted { color: var(--muted); font-size: 13px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--purple);
+  color: white;
+}
+.btn:hover { background: var(--purple-dark); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.secondary { background: var(--bg-soft); color: var(--purple-dark); }
+.btn.secondary:hover { background: #ece9fd; }
+
+.form-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.form-row label { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.form-row input, .form-row textarea {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+
+.section { margin-top: 28px; }
+
+.keyword-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-soft);
+  border-radius: 999px;
+  padding: 5px 6px 5px 12px;
+  font-size: 12.5px;
+  margin: 0 8px 8px 0;
+}
+.keyword-chip button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.keyword-chip button:hover { background: #ddd8fb; color: var(--purple-dark); }
+
+.report-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+.report-row:last-child { border-bottom: none; }
+.report-actions { display: flex; gap: 8px; }
+.report-actions a, .report-actions button { font-size: 12.5px; }
+
+.score-tag { font-weight: 800; color: var(--purple-dark); }
+
+.banner {
+  background: #fff8e1;
+  border: 1px solid #f5deb3;
+  color: #8a6d00;
+  font-size: 12.5px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  margin: 12px 0;
+}
+.banner.success { background: #e9f9ee; border-color: #a9e2bb; color: #197a37; }
+.banner.error { background: #fdeeee; border-color: #f0b7b7; color: #a12a2a; }
+
+.inline-form { display: flex; gap: 8px; align-items: flex-end; }
+.inline-form .form-row { flex: 1; margin-bottom: 0; }

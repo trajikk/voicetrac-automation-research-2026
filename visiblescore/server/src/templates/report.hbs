@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>{{client.name}} — AI Visibility Report</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1a1a2e;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
+  .page { padding: 40px 48px; }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #efeffb;
+    margin-bottom: 28px;
+  }
+  .brand { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #6d5ff5; font-weight: 700; }
+  h1 { font-size: 26px; margin: 4px 0 2px; }
+  .subtitle { color: #6b6b80; font-size: 13px; }
+  .score-badge {
+    background: linear-gradient(135deg, #d8d3fb 0%, #f6d9ec 100%);
+    border-radius: 16px;
+    padding: 14px 22px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .score-badge .num { font-size: 40px; font-weight: 800; color: #4b3ff0; line-height: 1; }
+  .score-badge .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #5a5a72; margin-top: 4px; }
+  .delta { font-size: 12px; margin-top: 6px; font-weight: 600; }
+  .delta.up { color: #16a34a; }
+  .delta.down { color: #dc2626; }
+  .delta.flat { color: #6b6b80; }
+
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #2b2b45; }
+
+  .platform-grid { display: flex; gap: 14px; }
+  .platform-card {
+    flex: 1;
+    border: 1px solid #ececf7;
+    border-radius: 14px;
+    padding: 16px 18px;
+    background: linear-gradient(160deg, #f9f8ff 0%, #ffffff 70%);
+  }
+  .platform-card .p-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #6d5ff5; }
+  .platform-card .p-rate { font-size: 28px; font-weight: 800; margin: 6px 0 2px; }
+  .platform-card .p-sub { font-size: 12px; color: #6b6b80; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th { text-align: left; padding: 8px 10px; background: #f7f6fd; color: #55556b; font-weight: 700; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.03em; }
+  td { padding: 9px 10px; border-bottom: 1px solid #f0f0f7; vertical-align: top; }
+  .mention-yes { color: #16a34a; font-weight: 700; }
+  .mention-no { color: #b3b3c2; }
+  .pos { color: #6b6b80; font-size: 11px; }
+
+  .traffic-box { border: 1px solid #ececf7; border-radius: 14px; padding: 18px 20px; }
+  .traffic-stats { display: flex; gap: 28px; margin-bottom: 14px; }
+  .stat .val { font-size: 22px; font-weight: 800; }
+  .stat .lbl { font-size: 11px; color: #6b6b80; text-transform: uppercase; letter-spacing: 0.03em; }
+  .legend { font-size: 11px; color: #6b6b80; margin-top: 8px; }
+  .legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+
+  .footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid #efeffb; font-size: 10.5px; color: #9a9ab0; display: flex; justify-content: space-between; }
+  .mocked-banner { background: #fff8e1; border: 1px solid #f5deb3; color: #8a6d00; font-size: 11.5px; padding: 8px 14px; border-radius: 8px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="brand">AI Search Visibility Report</div>
+      <h1>{{client.name}}</h1>
+      <div class="subtitle">{{client.brand_domain}} &nbsp;·&nbsp; {{dateRange.start}} to {{dateRange.end}}</div>
+    </div>
+    <div class="score-badge">
+      <div class="num">{{overallScore}}%</div>
+      <div class="label">Visibility Score</div>
+      {{#if hasPrevious}}
+        <div class="delta {{deltaClass}}">{{deltaLabel}}</div>
+      {{/if}}
+    </div>
+  </div>
+
+  {{#if anyMocked}}
+  <div class="mocked-banner">Demo data: one or more platform checks used sample data because an API key wasn't configured. See README for connecting live sources.</div>
+  {{/if}}
+
+  <div class="section">
+    <div class="section-title">Visibility by Platform</div>
+    <div class="platform-grid">
+      {{#each byPlatform}}
+      <div class="platform-card">
+        <div class="p-name">{{this.label}}</div>
+        <div class="p-rate">{{this.percent}}%</div>
+        <div class="p-sub">{{this.mentioned}} of {{this.total}} tracked terms</div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Google Analytics Traffic ({{ga4.rangeStart}} – {{ga4.rangeEnd}})</div>
+    <div class="traffic-box">
+      <div class="traffic-stats">
+        <div class="stat"><div class="val">{{ga4.totalSessions}}</div><div class="lbl">Sessions</div></div>
+        <div class="stat"><div class="val">{{ga4.totalUsers}}</div><div class="lbl">Users</div></div>
+        <div class="stat"><div class="val">{{ga4.conversions}}</div><div class="lbl">Conversions</div></div>
+        <div class="stat"><div class="val">{{ga4.aiReferralSessions}}</div><div class="lbl">Sessions from AI Platforms</div></div>
+      </div>
+      {{{sparklineSvg}}}
+      <div class="legend">
+        <span class="dot" style="background:#6d5ff5"></span>Total sessions
+        &nbsp;&nbsp;
+        <span class="dot" style="background:#22b8cf"></span>Sessions referred from AI platforms
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tracked Search Terms</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>ChatGPT</th>
+          <th>Perplexity</th>
+          <th>Google AI Overview</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each keywordRows}}
+        <tr>
+          <td>{{this.phrase}}</td>
+          <td>{{{this.chatgpt}}}</td>
+          <td>{{{this.perplexity}}}</td>
+          <td>{{{this.google_ai_overview}}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <div>Generated {{generatedAt}} for {{client.contact_email}}</div>
+    <div>VisibleScore</div>
+  </div>
+</div>
+</body>
+</html>

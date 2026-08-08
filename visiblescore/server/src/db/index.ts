@@ -1,0 +1,215 @@
+import Database from "better-sqlite3";
+import { nanoid } from "nanoid";
+import path from "node:path";
+import fs from "node:fs";
+import { fileURLToPath } from "node:url";
+import type {
+  Client,
+  Ga4Source,
+  Keyword,
+  Scan,
+  ScanResult,
+  Report,
+  Platform,
+} from "../types.js";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dataDir = path.join(__dirname, "..", "..", "data");
+fs.mkdirSync(dataDir, { recursive: true });
+
+export const db = new Database(path.join(dataDir, "visiblescore.db"));
+db.pragma("journal_mode = WAL");
+db.pragma("foreign_keys = ON");
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS clients (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  contact_email TEXT NOT NULL,
+  brand_domain TEXT NOT NULL,
+  brand_names TEXT NOT NULL DEFAULT '[]',
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ga4_sources (
+  id TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  property_id TEXT NOT NULL,
+  service_account_json TEXT,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS keywords (
+  id TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  phrase TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS scans (
+  id TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS scan_results (
+  id TEXT PRIMARY KEY,
+  scan_id TEXT NOT NULL REFERENCES scans(id) ON DELETE CASCADE,
+  keyword_id TEXT NOT NULL REFERENCES keywords(id) ON DELETE CASCADE,
+  platform TEXT NOT NULL,
+  mentioned INTEGER NOT NULL,
+  position INTEGER,
+  snippet TEXT,
+  source_urls TEXT NOT NULL DEFAULT '[]',
+  raw_excerpt TEXT
+);
+
+CREATE TABLE IF NOT EXISTS reports (
+  id TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  scan_id TEXT NOT NULL REFERENCES scans(id) ON DELETE CASCADE,
+  ga4_summary_json TEXT,
+  overall_score REAL NOT NULL,
+  pdf_path TEXT,
+  emailed_at TEXT,
+  created_at TEXT NOT NULL
+);
+`);
+
+const now = () => new Date().toISOString();
+
+export const Clients = {
+  create(input: { name: string; contact_email: string; brand_domain: string; brand_names: string[] }): Client {
+    const row: Client = { id: nanoid(10), created_at: now(), ...input };
+    db.prepare(
+      `INSERT INTO clients (id, name, contact_email, brand_domain, brand_names, created_at) VALUES (?, ?, ?, ?, ?, ?)`
+    ).run(row.id, row.name, row.contact_email, row.brand_domain, JSON.stringify(row.brand_names), row.created_at);
+    return row;
+  },
+  list(): Client[] {
+    return (db.prepare(`SELECT * FROM clients ORDER BY created_at DESC`).all() as any[]).map(deserializeClient);
+  },
+  get(id: string): Client | undefined {
+    const row = db.prepare(`SELECT * FROM clients WHERE id = ?`).get(id) as any;
+    return row ? deserializeClient(row) : undefined;
+  },
+};
+
+function deserializeClient(row: any): Client {
+  return { ...row, brand_names: JSON.parse(row.brand_names) };
+}
+
+export const Ga4Sources = {
+  upsert(input: { client_id: string; property_id: string; service_account_json: string | null }): Ga4Source {
+    const existing = db
+      .prepare(`SELECT * FROM ga4_sources WHERE client_id = ?`)
+      .get(input.client_id) as Ga4Source | undefined;
+    if (existing) {
+      db.prepare(`UPDATE ga4_sources SET property_id = ?, service_account_json = ? WHERE id = ?`).run(
+        input.property_id,
+        input.service_account_json,
+        existing.id
+      );
+      return { ...existing, ...input };
+    }
+    const row: Ga4Source = { id: nanoid(10), created_at: now(), ...input };
+    db.prepare(
+      `INSERT INTO ga4_sources (id, client_id, property_id, service_account_json, created_at) VALUES (?, ?, ?, ?, ?)`
+    ).run(row.id, row.client_id, row.property_id, row.service_account_json, row.created_at);
+    return row;
+  },
+  getByClient(client_id: string): Ga4Source | undefined {
+    return db.prepare(`SELECT * FROM ga4_sources WHERE client_id = ?`).get(client_id) as Ga4Source | undefined;
+  },
+};
+
+export const Keywords = {
+  add(client_id: string, phrase: string): Keyword {
+    const row: Keyword = { id: nanoid(10), client_id, phrase, created_at: now() };
+    db.prepare(`INSERT INTO keywords (id, client_id, phrase, created_at) VALUES (?, ?, ?, ?)`).run(
+      row.id,
+      row.client_id,
+      row.phrase,
+      row.created_at
+    );
+    return row;
+  },
+  listByClient(client_id: string): Keyword[] {
+    return db.prepare(`SELECT * FROM keywords WHERE client_id = ? ORDER BY created_at ASC`).all(client_id) as Keyword[];
+  },
+  remove(id: string) {
+    db.prepare(`DELETE FROM keywords WHERE id = ?`).run(id);
+  },
+};
+
+export const Scans = {
+  create(client_id: string): Scan {
+    const row: Scan = { id: nanoid(10), client_id, created_at: now() };
+    db.prepare(`INSERT INTO scans (id, client_id, created_at) VALUES (?, ?, ?)`).run(row.id, row.client_id, row.created_at);
+    return row;
+  },
+  get(id: string): Scan | undefined {
+    return db.prepare(`SELECT * FROM scans WHERE id = ?`).get(id) as Scan | undefined;
+  },
+  listByClient(client_id: string): Scan[] {
+    return db.prepare(`SELECT * FROM scans WHERE client_id = ? ORDER BY created_at DESC`).all(client_id) as Scan[];
+  },
+};
+
+export const ScanResults = {
+  bulkInsert(results: Array<Omit<ScanResult, "id">>) {
+    const stmt = db.prepare(
+      `INSERT INTO scan_results (id, scan_id, keyword_id, platform, mentioned, position, snippet, source_urls, raw_excerpt)
+       VALUES (@id, @scan_id, @keyword_id, @platform, @mentioned, @position, @snippet, @source_urls, @raw_excerpt)`
+    );
+    const tx = db.transaction((rows: ScanResult[]) => {
+      for (const r of rows) stmt.run(r);
+    });
+    tx(
+      results.map((r) => ({
+        id: nanoid(10),
+        ...r,
+        mentioned: r.mentioned ? 1 : 0,
+        source_urls: JSON.stringify(r.source_urls),
+      })) as any
+    );
+  },
+  listByScan(scan_id: string): ScanResult[] {
+    return (db.prepare(`SELECT * FROM scan_results WHERE scan_id = ?`).all(scan_id) as any[]).map((row) => ({
+      ...row,
+      mentioned: !!row.mentioned,
+      source_urls: JSON.parse(row.source_urls),
+    }));
+  },
+};
+
+export const Reports = {
+  create(input: {
+    client_id: string;
+    scan_id: string;
+    ga4_summary_json: string | null;
+    overall_score: number;
+    pdf_path: string | null;
+  }): Report {
+    const row: Report = { id: nanoid(10), created_at: now(), emailed_at: null, ...input };
+    db.prepare(
+      `INSERT INTO reports (id, client_id, scan_id, ga4_summary_json, overall_score, pdf_path, emailed_at, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(row.id, row.client_id, row.scan_id, row.ga4_summary_json, row.overall_score, row.pdf_path, row.emailed_at, row.created_at);
+    return row;
+  },
+  get(id: string): Report | undefined {
+    return db.prepare(`SELECT * FROM reports WHERE id = ?`).get(id) as Report | undefined;
+  },
+  listByClient(client_id: string): Report[] {
+    return db.prepare(`SELECT * FROM reports WHERE client_id = ? ORDER BY created_at DESC`).all(client_id) as Report[];
+  },
+  markEmailed(id: string) {
+    db.prepare(`UPDATE reports SET emailed_at = ? WHERE id = ?`).run(now(), id);
+  },
+  previousBefore(client_id: string, created_at: string): Report | undefined {
+    return db
+      .prepare(`SELECT * FROM reports WHERE client_id = ? AND created_at < ? ORDER BY created_at DESC LIMIT 1`)
+      .get(client_id, created_at) as Report | undefined;
+  },
+};
