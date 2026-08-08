@@ -69,6 +69,26 @@
 
   .footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid #efeffb; font-size: 10.5px; color: #9a9ab0; display: flex; justify-content: space-between; }
   .mocked-banner { background: #fff8e1; border: 1px solid #f5deb3; color: #8a6d00; font-size: 11.5px; padding: 8px 14px; border-radius: 8px; margin-bottom: 20px; }
+
+  .leaderboard-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .leaderboard-row .lb-label { width: 150px; font-size: 12.5px; font-weight: 600; flex-shrink: 0; }
+  .leaderboard-row.is-client .lb-label { color: #4b3ff0; }
+  .lb-track { flex: 1; background: #f1f0fa; border-radius: 999px; height: 10px; overflow: hidden; }
+  .lb-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #6d5ff5, #a78bfa); }
+  .leaderboard-row.is-client .lb-fill { background: linear-gradient(90deg, #4b3ff0, #8a5ff5); }
+  .lb-pct { width: 46px; text-align: right; font-size: 12.5px; font-weight: 700; flex-shrink: 0; }
+
+  .sentiment-bar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; margin: 10px 0; }
+  .sentiment-bar .seg-pos { background: #34c07a; }
+  .sentiment-bar .seg-neu { background: #d8d8e6; }
+  .sentiment-bar .seg-neg { background: #e5595f; }
+  .sentiment-legend { display: flex; gap: 18px; font-size: 12px; color: #55556b; }
+  .sentiment-legend .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+
+  .gap-item { border: 1px solid #ececf7; border-radius: 12px; padding: 12px 16px; margin-bottom: 10px; }
+  .gap-item .gap-term { font-weight: 700; font-size: 13px; }
+  .gap-item .gap-meta { font-size: 11.5px; color: #a12a2a; margin: 3px 0 6px; }
+  .gap-item .gap-rec { font-size: 12.5px; color: #3a3a52; }
 </style>
 </head>
 <body>
@@ -104,6 +124,50 @@
       {{/each}}
     </div>
   </div>
+
+  {{#if hasCompetitors}}
+  <div class="section">
+    <div class="section-title">Competitive Leaderboard — Overall Mention Rate</div>
+    {{#each leaderboard}}
+    <div class="leaderboard-row {{#if this.isClient}}is-client{{/if}}">
+      <div class="lb-label">{{this.label}}{{#if this.isClient}} (you){{/if}}</div>
+      <div class="lb-track"><div class="lb-fill" style="width: {{this.barWidth}}%"></div></div>
+      <div class="lb-pct">{{this.percent}}%</div>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <div class="section">
+    <div class="section-title">Sentiment of {{client.name}} Mentions</div>
+    {{#if sentiment.total}}
+    <div class="sentiment-bar">
+      <div class="seg-pos" style="width: {{sentiment.positivePct}}%"></div>
+      <div class="seg-neu" style="width: {{sentiment.neutralPct}}%"></div>
+      <div class="seg-neg" style="width: {{sentiment.negativePct}}%"></div>
+    </div>
+    <div class="sentiment-legend">
+      <span><span class="dot" style="background:#34c07a"></span>Positive {{sentiment.positivePct}}%</span>
+      <span><span class="dot" style="background:#d8d8e6"></span>Neutral {{sentiment.neutralPct}}%</span>
+      <span><span class="dot" style="background:#e5595f"></span>Negative {{sentiment.negativePct}}%</span>
+    </div>
+    {{else}}
+    <div class="muted" style="color:#6b6b80; font-size:12.5px;">No mentions found this period to score sentiment on.</div>
+    {{/if}}
+  </div>
+
+  {{#if hasGaps}}
+  <div class="section">
+    <div class="section-title">Content Gaps — Terms Competitors Win</div>
+    {{#each gaps}}
+    <div class="gap-item">
+      <div class="gap-term">"{{this.phrase}}"</div>
+      <div class="gap-meta">Cited instead: {{#each this.winningCompetitors}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
+      <div class="gap-rec">{{this.recommendation}}</div>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
 
   <div class="section">
     <div class="section-title">Google Analytics Traffic ({{ga4.rangeStart}} – {{ga4.rangeEnd}})</div>

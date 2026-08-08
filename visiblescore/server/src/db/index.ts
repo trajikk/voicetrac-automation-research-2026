@@ -5,12 +5,13 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import type {
   Client,
+  Competitor,
   Ga4Source,
   Keyword,
   Scan,
-  ScanResult,
+  PlatformResponse,
+  EntityMention,
   Report,
-  Platform,
 } from "../types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -28,6 +29,14 @@ CREATE TABLE IF NOT EXISTS clients (
   contact_email TEXT NOT NULL,
   brand_domain TEXT NOT NULL,
   brand_names TEXT NOT NULL DEFAULT '[]',
+  created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS competitors (
+  id TEXT PRIMARY KEY,
+  client_id TEXT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  domain TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
 
@@ -52,16 +61,30 @@ CREATE TABLE IF NOT EXISTS scans (
   created_at TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS scan_results (
+-- One raw AI answer per (scan, keyword, platform).
+CREATE TABLE IF NOT EXISTS platform_responses (
   id TEXT PRIMARY KEY,
   scan_id TEXT NOT NULL REFERENCES scans(id) ON DELETE CASCADE,
   keyword_id TEXT NOT NULL REFERENCES keywords(id) ON DELETE CASCADE,
   platform TEXT NOT NULL,
+  raw_text TEXT NOT NULL,
+  source_urls TEXT NOT NULL DEFAULT '[]',
+  mocked INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+
+-- One row per entity (client or a tracked competitor) checked against a response.
+CREATE TABLE IF NOT EXISTS entity_mentions (
+  id TEXT PRIMARY KEY,
+  response_id TEXT NOT NULL REFERENCES platform_responses(id) ON DELETE CASCADE,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  entity_label TEXT NOT NULL,
   mentioned INTEGER NOT NULL,
   position INTEGER,
   snippet TEXT,
-  source_urls TEXT NOT NULL DEFAULT '[]',
-  raw_excerpt TEXT
+  sentiment TEXT,
+  sentiment_rationale TEXT
 );
 
 CREATE TABLE IF NOT EXISTS reports (
@@ -98,6 +121,32 @@ export const Clients = {
 function deserializeClient(row: any): Client {
   return { ...row, brand_names: JSON.parse(row.brand_names) };
 }
+
+export const Competitors = {
+  add(client_id: string, name: string, domain: string): Competitor {
+    const row: Competitor = {
+      id: nanoid(10),
+      client_id,
+      name,
+      domain: domain.replace(/^https?:\/\//, "").replace(/\/$/, ""),
+      created_at: now(),
+    };
+    db.prepare(`INSERT INTO competitors (id, client_id, name, domain, created_at) VALUES (?, ?, ?, ?, ?)`).run(
+      row.id,
+      row.client_id,
+      row.name,
+      row.domain,
+      row.created_at
+    );
+    return row;
+  },
+  listByClient(client_id: string): Competitor[] {
+    return db.prepare(`SELECT * FROM competitors WHERE client_id = ? ORDER BY created_at ASC`).all(client_id) as Competitor[];
+  },
+  remove(id: string) {
+    db.prepare(`DELETE FROM competitors WHERE id = ?`).run(id);
+  },
+};
 
 export const Ga4Sources = {
   upsert(input: { client_id: string; property_id: string; service_account_json: string | null }): Ga4Source {
@@ -156,30 +205,52 @@ export const Scans = {
   },
 };
 
-export const ScanResults = {
-  bulkInsert(results: Array<Omit<ScanResult, "id">>) {
-    const stmt = db.prepare(
-      `INSERT INTO scan_results (id, scan_id, keyword_id, platform, mentioned, position, snippet, source_urls, raw_excerpt)
-       VALUES (@id, @scan_id, @keyword_id, @platform, @mentioned, @position, @snippet, @source_urls, @raw_excerpt)`
-    );
-    const tx = db.transaction((rows: ScanResult[]) => {
-      for (const r of rows) stmt.run(r);
-    });
-    tx(
-      results.map((r) => ({
-        id: nanoid(10),
-        ...r,
-        mentioned: r.mentioned ? 1 : 0,
-        source_urls: JSON.stringify(r.source_urls),
-      })) as any
-    );
+export const PlatformResponses = {
+  create(input: {
+    scan_id: string;
+    keyword_id: string;
+    platform: string;
+    raw_text: string;
+    source_urls: string[];
+    mocked: boolean;
+  }): PlatformResponse {
+    const row: PlatformResponse = { id: nanoid(10), created_at: now(), ...input } as PlatformResponse;
+    db.prepare(
+      `INSERT INTO platform_responses (id, scan_id, keyword_id, platform, raw_text, source_urls, mocked, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    ).run(row.id, row.scan_id, row.keyword_id, row.platform, row.raw_text, JSON.stringify(row.source_urls), row.mocked ? 1 : 0, row.created_at);
+    return row;
   },
-  listByScan(scan_id: string): ScanResult[] {
-    return (db.prepare(`SELECT * FROM scan_results WHERE scan_id = ?`).all(scan_id) as any[]).map((row) => ({
+  listByScan(scan_id: string): PlatformResponse[] {
+    return (db.prepare(`SELECT * FROM platform_responses WHERE scan_id = ?`).all(scan_id) as any[]).map((row) => ({
       ...row,
-      mentioned: !!row.mentioned,
+      mocked: !!row.mocked,
       source_urls: JSON.parse(row.source_urls),
     }));
+  },
+};
+
+export const EntityMentions = {
+  bulkInsert(rows: Array<Omit<EntityMention, "id">>) {
+    const stmt = db.prepare(
+      `INSERT INTO entity_mentions (id, response_id, entity_type, entity_id, entity_label, mentioned, position, snippet, sentiment, sentiment_rationale)
+       VALUES (@id, @response_id, @entity_type, @entity_id, @entity_label, @mentioned, @position, @snippet, @sentiment, @sentiment_rationale)`
+    );
+    const tx = db.transaction((items: EntityMention[]) => {
+      for (const r of items) stmt.run(r);
+    });
+    tx(rows.map((r) => ({ id: nanoid(10), ...r, mentioned: r.mentioned ? 1 : 0 })) as any);
+  },
+  listByScan(scan_id: string): EntityMention[] {
+    return (
+      db
+        .prepare(
+          `SELECT em.* FROM entity_mentions em
+           JOIN platform_responses pr ON pr.id = em.response_id
+           WHERE pr.scan_id = ?`
+        )
+        .all(scan_id) as any[]
+    ).map((row) => ({ ...row, mentioned: !!row.mentioned }));
   },
 };
 

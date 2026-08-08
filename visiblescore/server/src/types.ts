@@ -2,12 +2,24 @@ export type Platform = "chatgpt" | "perplexity" | "google_ai_overview";
 
 export const PLATFORMS: Platform[] = ["chatgpt", "perplexity", "google_ai_overview"];
 
+export type Sentiment = "positive" | "neutral" | "negative";
+
+export type EntityType = "client" | "competitor";
+
 export interface Client {
   id: string;
   name: string;
   contact_email: string;
   brand_domain: string;
   brand_names: string[];
+  created_at: string;
+}
+
+export interface Competitor {
+  id: string;
+  client_id: string;
+  name: string;
+  domain: string;
   created_at: string;
 }
 
@@ -26,22 +38,37 @@ export interface Keyword {
   created_at: string;
 }
 
-export interface ScanResult {
-  id: string;
-  scan_id: string;
-  keyword_id: string;
-  platform: Platform;
-  mentioned: boolean;
-  position: number | null;
-  snippet: string | null;
-  source_urls: string[];
-  raw_excerpt: string | null;
-}
-
 export interface Scan {
   id: string;
   client_id: string;
   created_at: string;
+}
+
+// One raw AI answer per (scan, keyword, platform) — fetched once and then checked
+// for every tracked entity (the client + each competitor), rather than re-querying
+// the platform once per entity.
+export interface PlatformResponse {
+  id: string;
+  scan_id: string;
+  keyword_id: string;
+  platform: Platform;
+  raw_text: string;
+  source_urls: string[];
+  mocked: boolean;
+  created_at: string;
+}
+
+export interface EntityMention {
+  id: string;
+  response_id: string;
+  entity_type: EntityType;
+  entity_id: string;
+  entity_label: string;
+  mentioned: boolean;
+  position: number | null;
+  snippet: string | null;
+  sentiment: Sentiment | null;
+  sentiment_rationale: string | null;
 }
 
 export interface Report {

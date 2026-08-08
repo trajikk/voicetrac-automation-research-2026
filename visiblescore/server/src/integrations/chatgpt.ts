@@ -1,7 +1,6 @@
-import { detectMention } from "./mentionDetect.js";
 import { generateMockAnswer } from "./mockContent.js";
 import type { Platform } from "../types.js";
-import type { PlatformCheckInput, PlatformCheckResult } from "./perplexity.js";
+import type { PlatformQuery, RawPlatformResponse } from "./perplexity.js";
 
 // IMPORTANT CAVEAT: OpenAI has no API that reproduces the exact consumer ChatGPT app
 // (which blends browsing, memory, and a proprietary retrieval stack). This uses the
@@ -9,12 +8,11 @@ import type { PlatformCheckInput, PlatformCheckResult } from "./perplexity.js";
 // approximation of "would ChatGPT's browsing surface this brand." Treat results as
 // directional, not a literal transcript of what a ChatGPT user would see.
 // Docs: https://platform.openai.com/docs/guides/tools-web-search
-export async function checkChatGpt(input: PlatformCheckInput): Promise<PlatformCheckResult> {
+export async function fetchChatGpt(input: PlatformQuery): Promise<RawPlatformResponse> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    const mock = generateMockAnswer({ platform: "chatgpt", ...input });
-    const m = detectMention({ text: mock.text, citedUrls: mock.citedUrls, brandDomain: input.brandDomain, brandNames: input.brandNames });
-    return { platform: "chatgpt", ...m, source_urls: mock.citedUrls, raw_excerpt: mock.text, mocked: true };
+    const mock = generateMockAnswer({ platform: "chatgpt", keyword: input.keyword, entities: input.entities });
+    return { platform: "chatgpt", text: mock.text, citedUrls: mock.citedUrls, mocked: true };
   }
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -26,9 +24,7 @@ export async function checkChatGpt(input: PlatformCheckInput): Promise<PlatformC
       messages: [{ role: "user", content: input.keyword }],
     }),
   });
-  if (!res.ok) {
-    throw new Error(`OpenAI API error ${res.status}: ${await res.text()}`);
-  }
+  if (!res.ok) throw new Error(`OpenAI API error ${res.status}: ${await res.text()}`);
   const data = (await res.json()) as any;
   const message = data.choices?.[0]?.message;
   const text: string = message?.content ?? "";
@@ -36,6 +32,5 @@ export async function checkChatGpt(input: PlatformCheckInput): Promise<PlatformC
     .filter((a: any) => a.type === "url_citation")
     .map((a: any) => a.url_citation?.url)
     .filter(Boolean);
-  const m = detectMention({ text, citedUrls, brandDomain: input.brandDomain, brandNames: input.brandNames });
-  return { platform: "chatgpt" as Platform, ...m, source_urls: citedUrls, raw_excerpt: text.slice(0, 500), mocked: false };
+  return { platform: "chatgpt" as Platform, text, citedUrls, mocked: false };
 }

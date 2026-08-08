@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { Clients, Ga4Sources, Keywords, Reports } from "../db/index.js";
+import { Clients, Competitors, Ga4Sources, Keywords, Reports } from "../db/index.js";
+import { generateQuerySuggestions } from "../services/queryGenerator.js";
 
 export const clientsRouter = Router();
 
@@ -24,10 +25,12 @@ clientsRouter.post("/", (req, res) => {
 clientsRouter.get("/:id", (req, res) => {
   const client = Clients.get(req.params.id);
   if (!client) return res.status(404).json({ error: "not found" });
+  const ga4Source = Ga4Sources.getByClient(client.id);
   res.json({
     ...client,
     keywords: Keywords.listByClient(client.id),
-    ga4Source: Ga4Sources.getByClient(client.id) ? { ...Ga4Sources.getByClient(client.id), service_account_json: undefined, hasCredentials: !!Ga4Sources.getByClient(client.id)?.service_account_json } : null,
+    competitors: Competitors.listByClient(client.id),
+    ga4Source: ga4Source ? { property_id: ga4Source.property_id, hasCredentials: !!ga4Source.service_account_json } : null,
     reports: Reports.listByClient(client.id),
   });
 });
@@ -45,6 +48,30 @@ clientsRouter.delete("/keywords/:keywordId", (req, res) => {
   res.status(204).end();
 });
 
+clientsRouter.post("/:id/competitors", (req, res) => {
+  const client = Clients.get(req.params.id);
+  if (!client) return res.status(404).json({ error: "not found" });
+  const { name, domain } = req.body ?? {};
+  if (!name || !domain) return res.status(400).json({ error: "name and domain are required" });
+  res.status(201).json(Competitors.add(client.id, name.trim(), domain.trim()));
+});
+
+clientsRouter.delete("/competitors/:competitorId", (req, res) => {
+  Competitors.remove(req.params.competitorId);
+  res.status(204).end();
+});
+
+clientsRouter.post("/:id/suggest-keywords", async (req, res) => {
+  const client = Clients.get(req.params.id);
+  if (!client) return res.status(404).json({ error: "not found" });
+  try {
+    const result = await generateQuerySuggestions({ businessName: client.name, domain: client.brand_domain });
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message ?? "failed to generate suggestions" });
+  }
+});
+
 clientsRouter.put("/:id/ga4-source", (req, res) => {
   const client = Clients.get(req.params.id);
   if (!client) return res.status(404).json({ error: "not found" });
@@ -60,5 +87,5 @@ clientsRouter.put("/:id/ga4-source", (req, res) => {
   }
 
   const row = Ga4Sources.upsert({ client_id: client.id, property_id, service_account_json: service_account_json ?? null });
-  res.json({ ...row, service_account_json: undefined, hasCredentials: !!row.service_account_json });
+  res.json({ property_id: row.property_id, hasCredentials: !!row.service_account_json });
 });

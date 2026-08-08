@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { Clients, Ga4Sources, Keywords, Reports } from "../db/index.js";
+import { Clients, Competitors, Ga4Sources, Keywords, Reports } from "../db/index.js";
 import { runVisibilityScan } from "../services/visibilityScanner.js";
 import { fetchGa4Summary } from "../integrations/ga4.js";
 import { renderReportHtml, renderReportPdf } from "../services/reportGenerator.js";
 import { sendReportEmail } from "../services/emailer.js";
+import { detectContentGaps } from "../services/contentGap.js";
+import { buildExportRows, rowsToCsv } from "../services/exportReport.js";
 
 export const reportsRouter = Router();
 
@@ -13,6 +15,7 @@ reportsRouter.post("/clients/:id/reports", async (req, res) => {
 
   try {
     const keywords = Keywords.listByClient(client.id);
+    const competitors = Competitors.listByClient(client.id);
     const ga4Source = Ga4Sources.getByClient(client.id);
 
     const [scanSummary, ga4] = await Promise.all([
@@ -23,13 +26,16 @@ reportsRouter.post("/clients/:id/reports", async (req, res) => {
       }),
     ]);
 
+    const gaps = await detectContentGaps(keywords, scanSummary.entityResults);
     const previous = Reports.previousBefore(client.id, new Date().toISOString());
 
     const draftId = crypto.randomUUID().slice(0, 10);
     const html = await renderReportHtml({
       client,
+      competitors,
       keywords,
       scanSummary,
+      gaps,
       ga4,
       previousScore: previous?.overall_score ?? null,
       reportId: draftId,
@@ -61,6 +67,23 @@ reportsRouter.get("/reports/:id/pdf", (req, res) => {
   const report = Reports.get(req.params.id);
   if (!report || !report.pdf_path) return res.status(404).json({ error: "not found" });
   res.sendFile(report.pdf_path);
+});
+
+reportsRouter.get("/reports/:id/export", (req, res) => {
+  const report = Reports.get(req.params.id);
+  if (!report) return res.status(404).json({ error: "not found" });
+
+  const format = req.query.format === "csv" ? "csv" : "json";
+  const rows = buildExportRows(report);
+
+  if (format === "csv") {
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="report-${report.id}.csv"`);
+    return res.send(rowsToCsv(rows));
+  }
+
+  res.setHeader("Content-Disposition", `attachment; filename="report-${report.id}.json"`);
+  res.json({ report, rows });
 });
 
 reportsRouter.post("/reports/:id/email", async (req, res) => {

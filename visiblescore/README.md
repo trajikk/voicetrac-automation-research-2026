@@ -7,17 +7,33 @@ and generate a branded PDF report you can email straight from the dashboard.
 Runs entirely with demo/mock data out of the box — no API keys required to try it.
 Add real credentials per source when you're ready to run it on an actual client.
 
+Modeled after the AI-visibility category (Ziptie, Profound, Otterly.ai, Peec AI) —
+same core mechanics (multi-platform mention/citation tracking, competitor share-of-voice,
+sentiment, content-gap recommendations), plus GA4 traffic correlation and branded
+PDF/email delivery, which most of them don't do natively.
+
 ## What it does
 
 - **Add a client** — name, contact email, brand domain.
-- **Add search terms** to track (e.g. "best roofing company near me").
-- **Connect that client's GA4 property** (optional — falls back to demo traffic data).
+- **Add search terms** to track (e.g. "best roofing company near me"), or click
+  **Suggest search terms from website** to auto-generate a candidate list from the
+  client's homepage content.
+- **Track competitors** — add named competitor domains; every scan checks who else
+  shows up in the same AI answers.
+- **Connect the client's GA4 property** (optional — falls back to demo traffic data).
 - **Generate Report**: scans every tracked term against ChatGPT, Perplexity, and
-  Google AI Overviews for brand mentions/citations, pulls GA4 sessions/users/conversions
-  and AI-referral traffic, and renders a branded PDF with a visibility score, per-platform
-  breakdown, a term-by-term mention table, and a traffic trend chart.
+  Google AI Overviews, checking a single AI response per term for every tracked entity
+  (client + competitors) at once. Produces:
+  - Overall visibility score + per-platform mention breakdown
+  - Competitive leaderboard (mention rate, client vs. each competitor)
+  - Sentiment breakdown of the client's mentions (positive/neutral/negative)
+  - Content gaps — terms where competitors get cited and the client doesn't, with a
+    one-line recommendation per gap
+  - GA4 traffic (sessions/users/conversions) and AI-referral sessions, with a trend chart
+  - Score change vs. the previous report
 - **Email the report** to the client's contact directly from the dashboard.
-- Every report is stored, so each new one shows score change vs. the last one.
+- **Export** the full underlying scan data (every platform response, every entity's
+  mention/position/sentiment) as CSV or JSON — not just the summarized PDF.
 
 ## Architecture
 
@@ -27,13 +43,24 @@ visiblescore/
   client/   React + Vite dashboard
 ```
 
-- `server/src/integrations/` — one file per data source (`ga4.ts`, `perplexity.ts`,
-  `chatgpt.ts`, `googleAiOverview.ts`). Each falls back to deterministic mock data when
-  its API key is unset, so the app is fully runnable without any credentials.
-- `server/src/services/visibilityScanner.ts` — runs every tracked keyword against all
-  three AI platforms and computes the visibility score.
+- `server/src/integrations/` — one file per AI platform (`perplexity.ts`, `chatgpt.ts`,
+  `googleAiOverview.ts`) plus `ga4.ts`. Each platform integration fetches **one raw
+  response per keyword** and falls back to deterministic mock data when its API key is
+  unset, so the app is fully runnable without any credentials.
+- `server/src/integrations/mentionDetect.ts` — checks a raw response for a single
+  entity's (client or competitor) domain/name mentions and citation position.
+- `server/src/services/visibilityScanner.ts` — orchestrates the scan: fetches each
+  platform response once per keyword, then checks it against every tracked entity
+  (client + competitors), computing the score and a mention-rate leaderboard.
+- `server/src/services/sentimentAnalyzer.ts` — classifies the tone of each mention
+  (OpenAI-backed when `OPENAI_API_KEY` is set, lexicon heuristic fallback otherwise).
+- `server/src/services/queryGenerator.ts` — fetches the client's homepage and proposes
+  tracked-term suggestions (OpenAI-backed, template fallback otherwise).
+- `server/src/services/contentGap.ts` — flags terms where competitors are cited and the
+  client isn't, with a generated recommendation per gap.
 - `server/src/services/reportGenerator.ts` — renders `templates/report.hbs` to HTML,
   then to PDF via headless Chromium (Puppeteer).
+- `server/src/services/exportReport.ts` — builds the full entity-level export (CSV/JSON).
 - `server/src/services/emailer.ts` — sends the PDF via SMTP (nodemailer); no-ops with a
   clear message if SMTP isn't configured.
 

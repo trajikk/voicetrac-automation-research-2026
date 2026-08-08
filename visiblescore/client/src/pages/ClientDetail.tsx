@@ -9,11 +9,18 @@ export function ClientDetail() {
   const [notice, setNotice] = useState<string | null>(null);
 
   const [newKeyword, setNewKeyword] = useState("");
+  const [competitorName, setCompetitorName] = useState("");
+  const [competitorDomain, setCompetitorDomain] = useState("");
   const [propertyId, setPropertyId] = useState("");
   const [credsJson, setCredsJson] = useState("");
 
   const [generating, setGenerating] = useState(false);
   const [latestPreview, setLatestPreview] = useState<Report | null>(null);
+
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[] | null>(null);
+  const [suggestionsMocked, setSuggestionsMocked] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const load = useCallback(() => {
     if (!id) return;
@@ -35,6 +42,53 @@ export function ClientDetail() {
 
   async function removeKeyword(keywordId: string) {
     await api.removeKeyword(keywordId);
+    load();
+  }
+
+  async function suggestKeywords() {
+    if (!id) return;
+    setSuggesting(true);
+    setError(null);
+    try {
+      const result = await api.suggestKeywords(id);
+      setSuggestions(result.suggestions);
+      setSuggestionsMocked(result.mocked);
+      setSelected(new Set(result.suggestions));
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setSuggesting(false);
+    }
+  }
+
+  function toggleSuggestion(s: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(s)) next.delete(s);
+      else next.add(s);
+      return next;
+    });
+  }
+
+  async function addSelectedSuggestions() {
+    if (!id) return;
+    await Promise.all([...selected].map((phrase) => api.addKeyword(id, phrase)));
+    setSuggestions(null);
+    setSelected(new Set());
+    load();
+  }
+
+  async function addCompetitor(e: React.FormEvent) {
+    e.preventDefault();
+    if (!id || !competitorName.trim() || !competitorDomain.trim()) return;
+    await api.addCompetitor(id, { name: competitorName.trim(), domain: competitorDomain.trim() });
+    setCompetitorName("");
+    setCompetitorDomain("");
+    load();
+  }
+
+  async function removeCompetitor(competitorId: string) {
+    await api.removeCompetitor(competitorId);
     load();
   }
 
@@ -96,7 +150,7 @@ export function ClientDetail() {
           Each term is checked against ChatGPT, Perplexity, and Google AI Overviews on every report run.
         </div>
         <div>
-          {client.keywords.length === 0 && <div className="muted">No terms yet — add at least one below.</div>}
+          {client.keywords.length === 0 && <div className="muted">No terms yet — add one below or generate suggestions.</div>}
           {client.keywords.map((k) => (
             <span key={k.id} className="keyword-chip">
               {k.phrase}
@@ -108,6 +162,60 @@ export function ClientDetail() {
           <div className="form-row">
             <label>Add a search term to track</label>
             <input value={newKeyword} onChange={(e) => setNewKeyword(e.target.value)} placeholder="best roofing company near me" />
+          </div>
+          <button className="btn secondary" type="submit">Add</button>
+        </form>
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+          <button className="btn secondary" onClick={suggestKeywords} disabled={suggesting}>
+            {suggesting ? "Analyzing website…" : "Suggest search terms from website"}
+          </button>
+          {suggestions && (
+            <div style={{ marginTop: 12 }}>
+              {suggestionsMocked && (
+                <div className="banner" style={{ marginTop: 0, marginBottom: 10 }}>
+                  Demo suggestions — set OPENAI_API_KEY on the server for suggestions tailored to the actual homepage content.
+                </div>
+              )}
+              {suggestions.map((s) => (
+                <label key={s} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, padding: "4px 0" }}>
+                  <input type="checkbox" checked={selected.has(s)} onChange={() => toggleSuggestion(s)} />
+                  {s}
+                </label>
+              ))}
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button className="btn" onClick={addSelectedSuggestions} disabled={selected.size === 0}>
+                  Add {selected.size} selected term{selected.size === 1 ? "" : "s"}
+                </button>
+                <button className="btn secondary" onClick={() => setSuggestions(null)}>Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="section card">
+        <h2>Competitors</h2>
+        <div className="muted" style={{ marginBottom: 12 }}>
+          Tracked alongside {client.name} in every scan so reports show who wins each AI-search query.
+        </div>
+        <div>
+          {client.competitors.length === 0 && <div className="muted">No competitors added yet.</div>}
+          {client.competitors.map((c) => (
+            <span key={c.id} className="keyword-chip">
+              {c.name} <span className="muted">({c.domain})</span>
+              <button onClick={() => removeCompetitor(c.id)} aria-label="remove">×</button>
+            </span>
+          ))}
+        </div>
+        <form className="inline-form" style={{ marginTop: 12 }} onSubmit={addCompetitor}>
+          <div className="form-row">
+            <label>Competitor name</label>
+            <input value={competitorName} onChange={(e) => setCompetitorName(e.target.value)} placeholder="RoofPro" />
+          </div>
+          <div className="form-row">
+            <label>Competitor domain</label>
+            <input value={competitorDomain} onChange={(e) => setCompetitorDomain(e.target.value)} placeholder="roofpro.com" />
           </div>
           <button className="btn secondary" type="submit">Add</button>
         </form>
@@ -135,7 +243,7 @@ export function ClientDetail() {
       <div className="section card">
         <h2>Generate Report</h2>
         <div className="muted" style={{ marginBottom: 12 }}>
-          Runs a fresh scan across all tracked terms and pulls the latest GA4 traffic, then builds a client-ready PDF.
+          Runs a fresh scan across all tracked terms (and competitors) and pulls the latest GA4 traffic, then builds a client-ready PDF.
         </div>
         <button className="btn" onClick={generateReport} disabled={generating || client.keywords.length === 0}>
           {generating ? "Generating…" : "Generate Report"}
@@ -144,11 +252,11 @@ export function ClientDetail() {
 
         {latestPreview && (
           <div style={{ marginTop: 20 }}>
-            <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
-              <a className="btn secondary" href={api.reportPdfUrl(latestPreview.id)} target="_blank" rel="noreferrer">
-                Open PDF
-              </a>
+            <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+              <a className="btn secondary" href={api.reportPdfUrl(latestPreview.id)} target="_blank" rel="noreferrer">Open PDF</a>
               <button className="btn secondary" onClick={() => emailReport(latestPreview.id)}>Email to Client</button>
+              <a className="btn secondary" href={api.reportExportUrl(latestPreview.id, "csv")}>Export CSV</a>
+              <a className="btn secondary" href={api.reportExportUrl(latestPreview.id, "json")}>Export JSON</a>
             </div>
             <iframe
               title="report-preview"
@@ -171,6 +279,7 @@ export function ClientDetail() {
             </div>
             <div className="report-actions">
               <a className="btn secondary" href={api.reportPdfUrl(r.id)} target="_blank" rel="noreferrer">View PDF</a>
+              <a className="btn secondary" href={api.reportExportUrl(r.id, "csv")}>CSV</a>
               <button className="btn secondary" onClick={() => emailReport(r.id)}>Email</button>
             </div>
           </div>
