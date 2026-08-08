@@ -4,6 +4,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import type {
+  AgencySettings,
   Client,
   Competitor,
   Ga4Source,
@@ -29,7 +30,16 @@ CREATE TABLE IF NOT EXISTS clients (
   contact_email TEXT NOT NULL,
   brand_domain TEXT NOT NULL,
   brand_names TEXT NOT NULL DEFAULT '[]',
+  auto_report_frequency TEXT NOT NULL DEFAULT 'off',
   created_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS agency_settings (
+  id TEXT PRIMARY KEY,
+  agency_name TEXT NOT NULL,
+  logo_data_url TEXT,
+  primary_color TEXT NOT NULL,
+  updated_at TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS competitors (
@@ -103,10 +113,10 @@ const now = () => new Date().toISOString();
 
 export const Clients = {
   create(input: { name: string; contact_email: string; brand_domain: string; brand_names: string[] }): Client {
-    const row: Client = { id: nanoid(10), created_at: now(), ...input };
+    const row: Client = { id: nanoid(10), created_at: now(), auto_report_frequency: "off", ...input };
     db.prepare(
-      `INSERT INTO clients (id, name, contact_email, brand_domain, brand_names, created_at) VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(row.id, row.name, row.contact_email, row.brand_domain, JSON.stringify(row.brand_names), row.created_at);
+      `INSERT INTO clients (id, name, contact_email, brand_domain, brand_names, auto_report_frequency, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).run(row.id, row.name, row.contact_email, row.brand_domain, JSON.stringify(row.brand_names), row.auto_report_frequency, row.created_at);
     return row;
   },
   list(): Client[] {
@@ -115,6 +125,9 @@ export const Clients = {
   get(id: string): Client | undefined {
     const row = db.prepare(`SELECT * FROM clients WHERE id = ?`).get(id) as any;
     return row ? deserializeClient(row) : undefined;
+  },
+  setAutoReportFrequency(id: string, frequency: string) {
+    db.prepare(`UPDATE clients SET auto_report_frequency = ? WHERE id = ?`).run(frequency, id);
   },
 };
 
@@ -282,5 +295,32 @@ export const Reports = {
     return db
       .prepare(`SELECT * FROM reports WHERE client_id = ? AND created_at < ? ORDER BY created_at DESC LIMIT 1`)
       .get(client_id, created_at) as Report | undefined;
+  },
+  latestForClient(client_id: string): Report | undefined {
+    return db.prepare(`SELECT * FROM reports WHERE client_id = ? ORDER BY created_at DESC LIMIT 1`).get(client_id) as Report | undefined;
+  },
+};
+
+const DEFAULT_AGENCY_SETTINGS: AgencySettings = {
+  id: "default",
+  agency_name: "VisibleScore",
+  logo_data_url: null,
+  primary_color: "#6d5ff5",
+  updated_at: now(),
+};
+
+export const Settings = {
+  get(): AgencySettings {
+    const row = db.prepare(`SELECT * FROM agency_settings WHERE id = 'default'`).get() as AgencySettings | undefined;
+    return row ?? DEFAULT_AGENCY_SETTINGS;
+  },
+  upsert(input: { agency_name: string; logo_data_url: string | null; primary_color: string }): AgencySettings {
+    const row: AgencySettings = { id: "default", updated_at: now(), ...input };
+    db.prepare(
+      `INSERT INTO agency_settings (id, agency_name, logo_data_url, primary_color, updated_at) VALUES ('default', ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET agency_name = excluded.agency_name, logo_data_url = excluded.logo_data_url,
+         primary_color = excluded.primary_color, updated_at = excluded.updated_at`
+    ).run(row.agency_name, row.logo_data_url, row.primary_color, row.updated_at);
+    return row;
   },
 };

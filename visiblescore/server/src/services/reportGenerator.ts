@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDualLineSvg } from "./sparkline.js";
+import { Settings } from "../db/index.js";
 import type { Client, Competitor, Ga4Summary, Keyword, Platform } from "../types.js";
 import type { ScanSummary } from "./visibilityScanner.js";
 import type { ContentGap } from "./contentGap.js";
@@ -92,8 +93,16 @@ export async function renderReportHtml(inputs: ReportInputs): Promise<string> {
           scanSummary.overallScore - previousScore
         )} pts vs last report`;
 
+  const agencySettings = Settings.get();
+  const agency = {
+    name: agencySettings.agency_name,
+    logoDataUrl: agencySettings.logo_data_url,
+    showMasthead: !!agencySettings.logo_data_url,
+  };
+
   return template({
     client,
+    agency,
     dateRange: { start: ga4.rangeStart, end: ga4.rangeEnd },
     overallScore: scanSummary.overallScore,
     hasPrevious: previousScore !== null,

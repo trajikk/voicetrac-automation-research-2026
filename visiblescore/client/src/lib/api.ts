@@ -1,10 +1,18 @@
+export type AutoReportFrequency = "off" | "weekly" | "monthly";
+
 export interface Client {
   id: string;
   name: string;
   contact_email: string;
   brand_domain: string;
   brand_names: string[];
+  auto_report_frequency: AutoReportFrequency;
   created_at: string;
+}
+
+export interface ClientListItem extends Client {
+  latestScore: number | null;
+  scoreHistory: Array<{ date: string; score: number }>;
 }
 
 export interface Keyword {
@@ -45,6 +53,21 @@ export interface SuggestionResult {
   mocked: boolean;
 }
 
+export interface AgencySettings {
+  id: "default";
+  agency_name: string;
+  logo_data_url: string | null;
+  primary_color: string;
+  updated_at: string;
+}
+
+export interface SchedulerRunSummary {
+  checked: number;
+  due: number;
+  generated: string[];
+  failed: Array<{ clientId: string; error: string }>;
+}
+
 const BASE = "/api";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -61,7 +84,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  listClients: () => request<Client[]>("/clients"),
+  listClients: () => request<ClientListItem[]>("/clients"),
   createClient: (input: { name: string; contact_email: string; brand_domain: string; brand_names: string[] }) =>
     request<Client>("/clients", { method: "POST", body: JSON.stringify(input) }),
   getClient: (id: string) => request<ClientDetail>(`/clients/${id}`),
@@ -77,10 +100,21 @@ export const api = {
 
   setGa4Source: (clientId: string, input: { property_id: string; service_account_json?: string }) =>
     request(`/clients/${clientId}/ga4-source`, { method: "PUT", body: JSON.stringify(input) }),
+  setAutoReportFrequency: (clientId: string, frequency: AutoReportFrequency) =>
+    request<{ auto_report_frequency: AutoReportFrequency }>(`/clients/${clientId}/auto-report`, {
+      method: "PUT",
+      body: JSON.stringify({ frequency }),
+    }),
 
   generateReport: (clientId: string) => request<Report>(`/clients/${clientId}/reports`, { method: "POST" }),
   emailReport: (reportId: string) =>
     request<{ sent: boolean; reason?: string }>(`/reports/${reportId}/email`, { method: "POST" }),
   reportPdfUrl: (reportId: string) => `${BASE}/reports/${reportId}/pdf`,
   reportExportUrl: (reportId: string, format: "json" | "csv") => `${BASE}/reports/${reportId}/export?format=${format}`,
+
+  getSettings: () => request<AgencySettings>("/settings"),
+  saveSettings: (input: { agency_name: string; logo_data_url: string | null; primary_color: string }) =>
+    request<AgencySettings>("/settings", { method: "PUT", body: JSON.stringify(input) }),
+
+  runSchedulerNow: () => request<SchedulerRunSummary>("/scheduler/run-now", { method: "POST" }),
 };

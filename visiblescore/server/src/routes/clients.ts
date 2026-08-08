@@ -5,7 +5,16 @@ import { generateQuerySuggestions } from "../services/queryGenerator.js";
 export const clientsRouter = Router();
 
 clientsRouter.get("/", (_req, res) => {
-  res.json(Clients.list());
+  const clients = Clients.list();
+  const withScores = clients.map((client) => {
+    const reports = Reports.listByClient(client.id).slice(0, 8).reverse();
+    return {
+      ...client,
+      latestScore: reports.length ? reports[reports.length - 1].overall_score : null,
+      scoreHistory: reports.map((r) => ({ date: r.created_at, score: r.overall_score })),
+    };
+  });
+  res.json(withScores);
 });
 
 clientsRouter.post("/", (req, res) => {
@@ -70,6 +79,17 @@ clientsRouter.post("/:id/suggest-keywords", async (req, res) => {
   } catch (err: any) {
     res.status(500).json({ error: err.message ?? "failed to generate suggestions" });
   }
+});
+
+clientsRouter.put("/:id/auto-report", (req, res) => {
+  const client = Clients.get(req.params.id);
+  if (!client) return res.status(404).json({ error: "not found" });
+  const { frequency } = req.body ?? {};
+  if (!["off", "weekly", "monthly"].includes(frequency)) {
+    return res.status(400).json({ error: "frequency must be off, weekly, or monthly" });
+  }
+  Clients.setAutoReportFrequency(client.id, frequency);
+  res.json({ auto_report_frequency: frequency });
 });
 
 clientsRouter.put("/:id/ga4-source", (req, res) => {

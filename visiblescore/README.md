@@ -34,6 +34,14 @@ PDF/email delivery, which most of them don't do natively.
 - **Email the report** to the client's contact directly from the dashboard.
 - **Export** the full underlying scan data (every platform response, every entity's
   mention/position/sentiment) as CSV or JSON — not just the summarized PDF.
+- **Auto-report cadence** — set a client to Weekly or Monthly and an hourly background
+  scheduler generates and emails their report automatically, no manual clicks. New
+  clients with a cadence set get their first report on the next scheduler tick.
+- **White-label branding** — set your agency name, logo, and primary color once in
+  Branding settings; it appears in the dashboard sidebar, on every PDF report's header
+  and footer, and as the sender name on report emails. Resell this under your own brand.
+- **Score trend** — every client card shows a mini trend sparkline and current score as
+  a progress ring; the client detail page has a full trend chart across report history.
 
 ## Architecture
 
@@ -61,8 +69,13 @@ visiblescore/
 - `server/src/services/reportGenerator.ts` — renders `templates/report.hbs` to HTML,
   then to PDF via headless Chromium (Puppeteer).
 - `server/src/services/exportReport.ts` — builds the full entity-level export (CSV/JSON).
-- `server/src/services/emailer.ts` — sends the PDF via SMTP (nodemailer); no-ops with a
-  clear message if SMTP isn't configured.
+- `server/src/services/emailer.ts` — sends the PDF via SMTP (nodemailer), using agency
+  branding as the sender name; no-ops with a clear message if SMTP isn't configured.
+- `server/src/services/scheduler.ts` — hourly due-check against each client's
+  `auto_report_frequency`; generates and emails reports for clients that are due.
+  `POST /api/scheduler/run-now` triggers the same check on demand.
+- `server/src/db/index.ts` — SQLite schema/accessors, including `agency_settings`
+  (singleton row for white-label branding) and `auto_report_frequency` on clients.
 
 ## Running it locally
 
@@ -136,12 +149,20 @@ Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and optionally `SMTP_FRO
 etc.). Without these set, "Email to Client" fails with a clear message and the report
 stays downloadable as a PDF from the dashboard.
 
-## Notes on scanning cadence
+### White-label branding
 
-`Generate Report` runs synchronously when clicked — fine for on-demand use. For running
-this against many clients on a schedule (e.g. weekly), the natural next step is a cron
-job or scheduled task that calls `POST /api/clients/:id/reports` per client and emails
-the result automatically.
+No env var needed — set it from the dashboard's **Branding** page (agency name, logo,
+primary color). Applied automatically to the sidebar, PDF report header/footer, and the
+sender name on report emails. This is what makes the tool resellable as your own product
+rather than looking like a third-party vendor's report.
+
+### Auto-report scheduling
+
+Set a client's cadence from **Off/Weekly/Monthly** pills on their detail page — no env
+var or cron setup needed. The server runs an hourly in-process check (`server/src/services/scheduler.ts`)
+against each client's last report date; anything due gets a fresh report generated and
+emailed automatically. `POST /api/scheduler/run-now` triggers the same check immediately,
+useful for testing or forcing a catch-up run without waiting for the next hourly tick.
 
 ## Data storage
 

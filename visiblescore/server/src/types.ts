@@ -6,13 +6,24 @@ export type Sentiment = "positive" | "neutral" | "negative";
 
 export type EntityType = "client" | "competitor";
 
+export type AutoReportFrequency = "off" | "weekly" | "monthly";
+
 export interface Client {
   id: string;
   name: string;
   contact_email: string;
   brand_domain: string;
   brand_names: string[];
+  auto_report_frequency: AutoReportFrequency;
   created_at: string;
+}
+
+export interface AgencySettings {
+  id: "default";
+  agency_name: string;
+  logo_data_url: string | null;
+  primary_color: string;
+  updated_at: string;
 }
 
 export interface Competitor {

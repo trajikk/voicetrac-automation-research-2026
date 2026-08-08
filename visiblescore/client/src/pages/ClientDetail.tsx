@@ -1,12 +1,21 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { api, type ClientDetail as ClientDetailType, type Report } from "../lib/api.ts";
+import { api, type AutoReportFrequency, type ClientDetail as ClientDetailType, type Report } from "../lib/api.ts";
+import { ScoreRing } from "../components/ScoreRing.tsx";
+import { TrendChart } from "../components/TrendChart.tsx";
+import { useToast } from "../components/Toast.tsx";
+
+const FREQUENCIES: Array<{ value: AutoReportFrequency; label: string }> = [
+  { value: "off", label: "Off" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+];
 
 export function ClientDetail() {
   const { id } = useParams<{ id: string }>();
+  const toast = useToast();
   const [client, setClient] = useState<ClientDetailType | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [newKeyword, setNewKeyword] = useState("");
   const [competitorName, setCompetitorName] = useState("");
@@ -27,7 +36,7 @@ export function ClientDetail() {
     api.getClient(id).then((c) => {
       setClient(c);
       setPropertyId(c.ga4Source?.property_id ?? "");
-    }).catch((e) => setError(e.message));
+    }).catch((e) => setLoadError(e.message));
   }, [id]);
 
   useEffect(() => { load(); }, [load]);
@@ -48,14 +57,13 @@ export function ClientDetail() {
   async function suggestKeywords() {
     if (!id) return;
     setSuggesting(true);
-    setError(null);
     try {
       const result = await api.suggestKeywords(id);
       setSuggestions(result.suggestions);
       setSuggestionsMocked(result.mocked);
       setSelected(new Set(result.suggestions));
     } catch (e: any) {
-      setError(e.message);
+      toast.push(e.message, "error");
     } finally {
       setSuggesting(false);
     }
@@ -97,52 +105,70 @@ export function ClientDetail() {
     if (!id) return;
     try {
       await api.setGa4Source(id, { property_id: propertyId, service_account_json: credsJson || undefined });
-      setNotice("GA4 source saved.");
+      toast.push("GA4 source saved.", "success");
       setCredsJson("");
       load();
     } catch (e: any) {
-      setError(e.message);
+      toast.push(e.message, "error");
+    }
+  }
+
+  async function setAutoReport(frequency: AutoReportFrequency) {
+    if (!id) return;
+    try {
+      await api.setAutoReportFrequency(id, frequency);
+      toast.push(frequency === "off" ? "Auto-reports turned off." : `Auto-reports set to ${frequency}.`, "success");
+      load();
+    } catch (e: any) {
+      toast.push(e.message, "error");
     }
   }
 
   async function generateReport() {
     if (!id) return;
     setGenerating(true);
-    setError(null);
-    setNotice(null);
     try {
       const report = await api.generateReport(id);
       setLatestPreview(report);
-      setNotice(`Report generated — visibility score ${report.overall_score}%.`);
+      toast.push(`Report generated — visibility score ${report.overall_score}%.`, "success");
       load();
     } catch (e: any) {
-      setError(e.message);
+      toast.push(e.message, "error");
     } finally {
       setGenerating(false);
     }
   }
 
   async function emailReport(reportId: string) {
-    setError(null);
-    setNotice(null);
     try {
       const result = await api.emailReport(reportId);
-      setNotice(result.sent ? "Report emailed to client." : `Not sent: ${result.reason}`);
+      toast.push(result.sent ? "Report emailed to client." : `Not sent: ${result.reason}`, result.sent ? "success" : "error");
     } catch (e: any) {
-      setError(e.message);
+      toast.push(e.message, "error");
     }
   }
 
-  if (error && !client) return <div className="container banner error">{error}</div>;
+  if (loadError && !client) return <div className="container banner error">{loadError}</div>;
   if (!client) return <div className="container muted">Loading…</div>;
+
+  const trendPoints = [...client.reports].reverse().map((r) => ({ date: r.created_at, score: r.overall_score }));
 
   return (
     <div className="container">
-      <h1>{client.name}</h1>
-      <div className="muted">{client.brand_domain} · reports go to {client.contact_email}</div>
+      <div className="page-head">
+        <div>
+          <h1>{client.name}</h1>
+          <div className="muted">{client.brand_domain} · reports go to {client.contact_email}</div>
+        </div>
+        <ScoreRing score={client.reports[0]?.overall_score ?? null} size={64} strokeWidth={7} />
+      </div>
 
-      {notice && <div className="banner success">{notice}</div>}
-      {error && <div className="banner error">{error}</div>}
+      <div className="section card">
+        <div className="section-head">
+          <h2>Visibility Score Trend</h2>
+        </div>
+        <TrendChart points={trendPoints} variant="full" height={160} />
+      </div>
 
       <div className="section card">
         <h2>Tracked Search Terms</h2>
@@ -241,12 +267,38 @@ export function ClientDetail() {
       </div>
 
       <div className="section card">
-        <h2>Generate Report</h2>
-        <div className="muted" style={{ marginBottom: 12 }}>
+        <div className="section-head">
+          <h2>Generate Report</h2>
+        </div>
+        <div className="muted" style={{ marginBottom: 14 }}>
           Runs a fresh scan across all tracked terms (and competitors) and pulls the latest GA4 traffic, then builds a client-ready PDF.
         </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <label style={{ fontSize: 12.5, fontWeight: 600, color: "var(--muted)", display: "block", marginBottom: 6 }}>
+            Auto-report cadence
+          </label>
+          <div className="pill-group">
+            {FREQUENCIES.map((f) => (
+              <button
+                key={f.value}
+                className={client.auto_report_frequency === f.value ? "active" : ""}
+                onClick={() => setAutoReport(f.value)}
+                type="button"
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          {client.auto_report_frequency !== "off" && (
+            <div className="muted" style={{ marginTop: 6 }}>
+              A report will be generated and emailed to {client.contact_email} automatically — no manual clicks needed.
+            </div>
+          )}
+        </div>
+
         <button className="btn" onClick={generateReport} disabled={generating || client.keywords.length === 0}>
-          {generating ? "Generating…" : "Generate Report"}
+          {generating ? "Generating…" : "Generate Report Now"}
         </button>
         {client.keywords.length === 0 && <div className="muted" style={{ marginTop: 8 }}>Add at least one search term first.</div>}
 
@@ -278,9 +330,9 @@ export function ClientDetail() {
               {r.emailed_at && <span className="muted"> · emailed {new Date(r.emailed_at).toLocaleDateString()}</span>}
             </div>
             <div className="report-actions">
-              <a className="btn secondary" href={api.reportPdfUrl(r.id)} target="_blank" rel="noreferrer">View PDF</a>
-              <a className="btn secondary" href={api.reportExportUrl(r.id, "csv")}>CSV</a>
-              <button className="btn secondary" onClick={() => emailReport(r.id)}>Email</button>
+              <a className="btn secondary sm" href={api.reportPdfUrl(r.id)} target="_blank" rel="noreferrer">View PDF</a>
+              <a className="btn secondary sm" href={api.reportExportUrl(r.id, "csv")}>CSV</a>
+              <button className="btn secondary sm" onClick={() => emailReport(r.id)}>Email</button>
             </div>
           </div>
         ))}

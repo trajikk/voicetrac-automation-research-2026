@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import fs from "node:fs";
+import { Settings } from "../db/index.js";
 
 export interface SendReportEmailArgs {
   to: string;
@@ -21,6 +22,8 @@ export async function sendReportEmail(args: SendReportEmailArgs): Promise<SendRe
     return { sent: false, reason: "SMTP not configured. Set SMTP_HOST/SMTP_USER/SMTP_PASS in .env." };
   }
 
+  const agency = Settings.get();
+
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: Number(SMTP_PORT ?? 587),
@@ -29,10 +32,10 @@ export async function sendReportEmail(args: SendReportEmailArgs): Promise<SendRe
   });
 
   await transporter.sendMail({
-    from: SMTP_FROM ?? SMTP_USER,
+    from: `"${agency.agency_name}" <${SMTP_FROM ?? SMTP_USER}>`,
     to: args.to,
     subject: `${args.clientName} — AI Search Visibility Report (${args.overallScore}%)`,
-    text: `Hi,\n\nAttached is the latest AI search visibility report for ${args.clientName}, showing an overall visibility score of ${args.overallScore}%.\n\nBest,\nYour team`,
+    text: `Hi,\n\nAttached is the latest AI search visibility report for ${args.clientName}, showing an overall visibility score of ${args.overallScore}%.\n\nBest,\n${agency.agency_name}`,
     attachments: [{ filename: "ai-visibility-report.pdf", content: fs.createReadStream(args.pdfPath) }],
   });
 

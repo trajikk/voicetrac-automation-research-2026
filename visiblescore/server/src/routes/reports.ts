@@ -1,11 +1,8 @@
 import { Router } from "express";
-import { Clients, Competitors, Ga4Sources, Keywords, Reports } from "../db/index.js";
-import { runVisibilityScan } from "../services/visibilityScanner.js";
-import { fetchGa4Summary } from "../integrations/ga4.js";
-import { renderReportHtml, renderReportPdf } from "../services/reportGenerator.js";
+import { Clients, Reports } from "../db/index.js";
 import { sendReportEmail } from "../services/emailer.js";
-import { detectContentGaps } from "../services/contentGap.js";
 import { buildExportRows, rowsToCsv } from "../services/exportReport.js";
+import { generateReportForClient } from "../services/generateReport.js";
 
 export const reportsRouter = Router();
 
@@ -14,43 +11,8 @@ reportsRouter.post("/clients/:id/reports", async (req, res) => {
   if (!client) return res.status(404).json({ error: "not found" });
 
   try {
-    const keywords = Keywords.listByClient(client.id);
-    const competitors = Competitors.listByClient(client.id);
-    const ga4Source = Ga4Sources.getByClient(client.id);
-
-    const [scanSummary, ga4] = await Promise.all([
-      runVisibilityScan(client),
-      fetchGa4Summary({
-        propertyId: ga4Source?.property_id ?? "",
-        serviceAccountJson: ga4Source?.service_account_json ?? null,
-      }),
-    ]);
-
-    const gaps = await detectContentGaps(keywords, scanSummary.entityResults);
-    const previous = Reports.previousBefore(client.id, new Date().toISOString());
-
-    const draftId = crypto.randomUUID().slice(0, 10);
-    const html = await renderReportHtml({
-      client,
-      competitors,
-      keywords,
-      scanSummary,
-      gaps,
-      ga4,
-      previousScore: previous?.overall_score ?? null,
-      reportId: draftId,
-    });
-    const pdfPath = await renderReportPdf(draftId, html);
-
-    const report = Reports.create({
-      client_id: client.id,
-      scan_id: scanSummary.scan.id,
-      ga4_summary_json: JSON.stringify(ga4),
-      overall_score: scanSummary.overallScore,
-      pdf_path: pdfPath,
-    });
-
-    res.status(201).json({ ...report, html });
+    const report = await generateReportForClient(client);
+    res.status(201).json(report);
   } catch (err: any) {
     console.error(err);
     res.status(500).json({ error: err.message ?? "failed to generate report" });
