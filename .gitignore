@@ -1,1 +1,12 @@
 .claude/settings.local.json
+
+# agent-reach
+agent-reach/__pycache__/
+agent-reach/**/__pycache__/
+agent-reach/*.egg-info/
+agent-reach/dist/
+agent-reach/build/
+agent-reach/.env
+agent-reach/.agent-reach/
+agent-reach/*.log
+agent-reach/.venv/
