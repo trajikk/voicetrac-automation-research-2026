@@ -1,0 +1,24 @@
+repository:
+  description: "⚡ Cut Claude token usage by 90%+ — open-source, local-first context compression for Claude Code using hybrid RAG (BM25 + ONNX vectors), AST chunking & reranking. Free. No API needed."
+  homepage: "https://github.com/Madhan230205/token-reducer"
+  topics:
+    - claude-code
+    - claude-code-plugin
+    - token-reduction
+    - context-compression
+    - context-optimization
+    - hybrid-retrieval
+    - rag
+    - bm25
+    - tree-sitter
+    - sqlite
+    - local-first
+    - open-source
+    - llm
+    - llm-tools
+    - ai-tools
+    - cost-optimization
+    - embeddings
+    - semantic-search
+    - python
+    - developer-productivity

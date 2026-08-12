@@ -10,3 +10,17 @@ agent-reach/.env
 agent-reach/.agent-reach/
 agent-reach/*.log
 agent-reach/.venv/
+
+# rtk
+rtk/target/
+
+# token-reducer
+token-reducer/.venv/
+token-reducer/**/__pycache__/
+token-reducer/*.egg-info/
+
+# claude-token-optimizer
+claude-token-optimizer/node_modules/
+
+# context-mode
+context-mode/node_modules/
