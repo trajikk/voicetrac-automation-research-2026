@@ -12,7 +12,7 @@ import {
   Radar,
   ShieldCheck,
 } from "lucide-react";
-import type { Lead } from "@/lib/types";
+import type { Lead, LeadStatus } from "@/lib/types";
 import { getAccent } from "@/lib/accent";
 import { formatCurrency, formatDate, initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ExclusiveStatusBadge, LeadStatusBadge } from "@/components/glass/status-badge";
+import { ExclusiveStatusBadge } from "@/components/glass/status-badge";
+import { LeadStatusSelect } from "@/components/glass/lead-status-select";
 import { LeadNotesPanel } from "@/components/glass/lead-notes-panel";
 
 interface LeadDetailDrawerProps {
@@ -33,6 +34,7 @@ interface LeadDetailDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddNote: (leadId: string, body: string) => void;
+  onStatusChange: (leadId: string, status: LeadStatus) => void;
 }
 
 function InfoRow({
@@ -57,7 +59,13 @@ function InfoRow({
   );
 }
 
-export function LeadDetailDrawer({ lead, open, onOpenChange, onAddNote }: LeadDetailDrawerProps) {
+export function LeadDetailDrawer({
+  lead,
+  open,
+  onOpenChange,
+  onAddNote,
+  onStatusChange,
+}: LeadDetailDrawerProps) {
   if (!lead) return null;
   const accent = getAccent(lead.avatarAccent);
 
@@ -86,7 +94,10 @@ export function LeadDetailDrawer({ lead, open, onOpenChange, onAddNote }: LeadDe
                 {lead.niche} · {lead.city}, {lead.state}
               </SheetDescription>
               <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                <LeadStatusBadge status={lead.status} />
+                <LeadStatusSelect
+                  status={lead.status}
+                  onChange={(status) => onStatusChange(lead.id, status)}
+                />
                 <ExclusiveStatusBadge status={lead.exclusiveStatus} />
               </div>
             </div>

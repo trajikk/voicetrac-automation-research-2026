@@ -97,6 +97,23 @@ function LeadsPageInner() {
     saveLeads(next);
   }
 
+  function handleStatusChange(leadId: string, status: LeadStatus) {
+    const now = new Date().toISOString();
+    const next = leadsData.map((lead) => {
+      if (lead.id !== leadId || lead.status === status) return lead;
+      return {
+        ...lead,
+        status,
+        notes: [
+          { id: `nt-${Date.now()}`, body: `Status changed to ${status}.`, createdAt: now },
+          ...lead.notes,
+        ],
+      };
+    });
+    setLeadsData(next);
+    saveLeads(next);
+  }
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       {/* Header */}
@@ -205,6 +222,7 @@ function LeadsPageInner() {
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         onAddNote={handleAddNote}
+        onStatusChange={handleStatusChange}
       />
       <QuickAddModal open={quickAddOpen} onOpenChange={setQuickAddOpen} onAdd={handleAdd} />
     </div>
