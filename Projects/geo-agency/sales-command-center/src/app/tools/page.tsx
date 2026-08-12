@@ -7,7 +7,7 @@ export default function ToolsHubPage() {
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">Tools Hub</h2>
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground">Tools Hub</h2>
         <p className="text-sm text-muted-foreground">
           {activeCount} active tools to help you sell and deliver GEO / AI visibility faster.
         </p>

@@ -53,20 +53,20 @@ export function StatCard({
           {trend && (
             <span
               className={cn(
-                "rounded-full px-2 py-0.5 text-[11px] font-medium",
+                "rounded-full px-2 py-0.5 text-xs font-medium",
                 trendDirection === "up" && "bg-accent-emerald/12 text-accent-emerald",
                 trendDirection === "down" && "bg-accent-rose/12 text-accent-rose",
-                trendDirection === "neutral" && "bg-white/[0.05] text-muted-foreground",
+                trendDirection === "neutral" && "bg-black/[0.08] dark:bg-white/[0.05] text-muted-foreground",
               )}
             >
               {trend}
             </span>
           )}
         </div>
-        <p className="relative mt-4 text-2xl font-semibold tracking-tight text-foreground">
+        <p className="relative mt-4 text-3xl font-semibold tracking-tight text-foreground">
           {value}
         </p>
-        <p className="relative mt-1 text-xs text-muted-foreground">{label}</p>
+        <p className="relative mt-1 text-sm text-muted-foreground">{label}</p>
       </GlassCard>
     </motion.div>
   );

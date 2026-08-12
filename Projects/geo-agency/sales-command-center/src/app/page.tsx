@@ -35,7 +35,7 @@ export default function DashboardPage() {
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground">
           Welcome back, Fred
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -99,7 +99,7 @@ export default function DashboardPage() {
               asChild
               variant="ghost"
               size="sm"
-              className="text-xs text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+              className="text-xs text-muted-foreground hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground"
             >
               <Link href="/leads">
                 View leads
@@ -107,7 +107,7 @@ export default function DashboardPage() {
               </Link>
             </Button>
           </div>
-          <div className="mt-2 divide-y divide-white/[0.05] px-6 pb-2">
+          <div className="mt-2 divide-y divide-black/[0.08] dark:divide-white/[0.05] px-6 pb-2">
             {activityFeed.map((item) => (
               <ActivityRow key={item.id} item={item} />
             ))}
@@ -132,7 +132,7 @@ export default function DashboardPage() {
             <Button
               asChild
               variant="outline"
-              className="justify-start gap-3 border-white/10 bg-white/[0.03] text-foreground/90 hover:bg-white/[0.07]"
+              className="justify-start gap-3 border-black/16 dark:border-white/10 bg-black/[0.048] dark:bg-white/[0.03] text-foreground/90 hover:bg-black/[0.112] dark:hover:bg-white/[0.07]"
             >
               <Link href="/territories">
                 <MapPinned className="size-4 text-accent-emerald" />
@@ -142,7 +142,7 @@ export default function DashboardPage() {
             <Button
               asChild
               variant="outline"
-              className="justify-start gap-3 border-white/10 bg-white/[0.03] text-foreground/90 hover:bg-white/[0.07]"
+              className="justify-start gap-3 border-black/16 dark:border-white/10 bg-black/[0.048] dark:bg-white/[0.03] text-foreground/90 hover:bg-black/[0.112] dark:hover:bg-white/[0.07]"
             >
               <Link href="/tools/pitch-pack-generator">
                 <Presentation className="size-4 text-accent-blue" />
@@ -152,7 +152,7 @@ export default function DashboardPage() {
             <Button
               asChild
               variant="outline"
-              className="justify-start gap-3 border-white/10 bg-white/[0.03] text-foreground/90 hover:bg-white/[0.07]"
+              className="justify-start gap-3 border-black/16 dark:border-white/10 bg-black/[0.048] dark:bg-white/[0.03] text-foreground/90 hover:bg-black/[0.112] dark:hover:bg-white/[0.07]"
             >
               <Link href="/tools/visibility-scanner">
                 <ScanSearch className="size-4 text-accent-cyan" />

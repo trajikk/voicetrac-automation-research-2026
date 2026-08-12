@@ -23,7 +23,7 @@ export function GlassCard({
         strong ? "glass-panel-strong" : "glass-panel",
         !noPadding && "p-5",
         interactive &&
-          "transition-all duration-300 ease-out hover:border-white/[0.16] hover:bg-white/[0.055] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)] cursor-pointer",
+          "transition-all duration-300 ease-out hover:border-black/[0.256] dark:hover:border-white/[0.16] hover:bg-black/[0.088] dark:hover:bg-white/[0.055] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.6)] cursor-pointer",
         className,
       )}
       {...props}

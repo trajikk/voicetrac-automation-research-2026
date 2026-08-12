@@ -6,6 +6,7 @@ import { Bell, Menu, Plus, Search } from "lucide-react";
 import { navItems } from "@/lib/nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AppearanceMenu } from "@/components/glass/appearance-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,21 +30,21 @@ export function GlassTopBar({ onOpenMobileNav }: GlassTopBarProps) {
     ) ?? navItems[0];
 
   return (
-    <header className="glass-panel glass-edge sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-white/[0.06] px-4 sm:px-6">
+    <header className="glass-panel glass-edge sticky top-0 z-10 flex h-16 items-center gap-3 border-b border-black/[0.096] dark:border-white/[0.06] px-4 sm:px-6">
       <button
         type="button"
         onClick={onOpenMobileNav}
-        className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-white/[0.06] hover:text-foreground lg:hidden"
+        className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground lg:hidden"
         aria-label="Open navigation"
       >
         <Menu className="size-[18px]" />
       </button>
 
       <div className="flex min-w-0 flex-col">
-        <h1 className="truncate text-[15px] font-semibold tracking-tight text-foreground">
+        <h1 className="truncate text-base font-semibold tracking-tight text-foreground">
           {current.label}
         </h1>
-        <p className="hidden truncate text-[11px] text-muted-foreground sm:block">
+        <p className="hidden truncate text-xs text-muted-foreground sm:block">
           {current.description}
         </p>
       </div>
@@ -53,7 +54,7 @@ export function GlassTopBar({ onOpenMobileNav }: GlassTopBarProps) {
           <Search className="pointer-events-none absolute top-1/2 left-3 size-[15px] -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search leads, territories, tools…"
-            className="h-9 border-white/[0.08] bg-white/[0.03] pl-9 placeholder:text-muted-foreground/70 focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+            className="h-9 border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] pl-9 text-sm placeholder:text-muted-foreground/70 focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
           />
         </div>
       </div>
@@ -71,18 +72,20 @@ export function GlassTopBar({ onOpenMobileNav }: GlassTopBarProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="relative text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+          className="relative text-muted-foreground hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground"
           aria-label="Notifications"
         >
           <Bell className="size-[18px]" />
           <span className="absolute top-2 right-2 size-1.5 rounded-full bg-accent-cyan shadow-[0_0_8px_var(--accent-cyan)]" />
         </Button>
 
+        <AppearanceMenu />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-accent-violet/70 to-accent-blue/70 text-xs font-semibold text-white ring-1 ring-white/10 transition-transform hover:scale-105"
+              className="flex size-9 items-center justify-center rounded-full bg-gradient-to-br from-accent-violet/70 to-accent-blue/70 text-xs font-semibold text-white ring-1 ring-black/16 dark:ring-white/10 transition-transform hover:scale-105"
             >
               FC
             </button>

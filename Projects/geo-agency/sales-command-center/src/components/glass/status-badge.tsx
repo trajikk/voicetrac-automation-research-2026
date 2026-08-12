@@ -11,7 +11,7 @@ const leadStatusStyles: Record<LeadStatus, string> = {
     "bg-accent-amber/12 text-accent-amber border-accent-amber/25 shadow-[0_0_14px_-4px_var(--accent-amber)]",
   "Closed Won":
     "bg-accent-emerald/12 text-accent-emerald border-accent-emerald/25 shadow-[0_0_14px_-4px_var(--accent-emerald)]",
-  "Closed Lost": "bg-white/[0.05] text-muted-foreground border-white/10",
+  "Closed Lost": "bg-black/[0.08] dark:bg-white/[0.05] text-muted-foreground border-black/16 dark:border-white/10",
 };
 
 const exclusiveStatusStyles: Record<ExclusiveStatus, string> = {
@@ -19,7 +19,7 @@ const exclusiveStatusStyles: Record<ExclusiveStatus, string> = {
     "bg-accent-emerald/12 text-accent-emerald border-accent-emerald/25 shadow-[0_0_14px_-4px_var(--accent-emerald)]",
   "Pending Lock":
     "bg-accent-amber/12 text-accent-amber border-accent-amber/25 shadow-[0_0_14px_-4px_var(--accent-amber)]",
-  Available: "bg-white/[0.05] text-muted-foreground border-white/10",
+  Available: "bg-black/[0.08] dark:bg-white/[0.05] text-muted-foreground border-black/16 dark:border-white/10",
 };
 
 const territoryStatusStyles: Record<TerritoryStatus, string> = {

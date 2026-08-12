@@ -64,6 +64,67 @@
 }
 
 :root {
+  --radius: 0.9rem;
+
+  /* ---- Light theme (default) ---- */
+  --background: oklch(0.975 0.006 260);
+  --foreground: oklch(0.2 0.018 264);
+  --card: oklch(1 0 0 / 65%);
+  --card-foreground: oklch(0.2 0.018 264);
+  --popover: oklch(1 0 0 / 92%);
+  --popover-foreground: oklch(0.2 0.018 264);
+  --primary: oklch(0.52 0.19 262);
+  --primary-foreground: oklch(0.99 0.002 264);
+  --secondary: oklch(0.93 0.008 264);
+  --secondary-foreground: oklch(0.24 0.02 264);
+  --muted: oklch(0.94 0.007 264);
+  --muted-foreground: oklch(0.46 0.02 264);
+  --accent: oklch(0.92 0.014 264);
+  --accent-foreground: oklch(0.22 0.02 264);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0 0 0 / 8%);
+  --input: oklch(0 0 0 / 10%);
+  --ring: oklch(0.52 0.19 262 / 45%);
+  --chart-1: oklch(0.52 0.19 262);
+  --chart-2: oklch(0.5 0.19 300);
+  --chart-3: oklch(0.46 0.11 200);
+  --chart-4: oklch(0.5 0.14 155);
+  --chart-5: oklch(0.58 0.15 70);
+  --sidebar: oklch(1 0 0 / 55%);
+  --sidebar-foreground: oklch(0.24 0.02 264);
+  --sidebar-primary: oklch(0.52 0.19 262);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0 0 0 / 4.5%);
+  --sidebar-accent-foreground: oklch(0.2 0.018 264);
+  --sidebar-border: oklch(0 0 0 / 8%);
+  --sidebar-ring: oklch(0.52 0.19 262 / 45%);
+
+  /* Accent colors — cool blue / violet / cyan family, plus status accents.
+     Darker/more saturated than the dark-theme set so they stay legible on light glass. */
+  --accent-blue: oklch(0.5 0.19 262);
+  --accent-violet: oklch(0.5 0.22 300);
+  --accent-cyan: oklch(0.46 0.11 200);
+  --accent-emerald: oklch(0.5 0.14 155);
+  --accent-amber: oklch(0.56 0.16 75);
+  --accent-rose: oklch(0.55 0.19 18);
+
+  /* Glass surface tokens — frosted white glass on a bright background */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-bg-hover: rgba(255, 255, 255, 0.66);
+  --glass-bg-active: rgba(255, 255, 255, 0.74);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-border-strong: rgba(0, 0, 0, 0.13);
+  --glass-sheen: rgba(255, 255, 255, 0.55);
+  --glass-sheen-strong: rgba(255, 255, 255, 0.7);
+  --glass-edge-hi: rgba(255, 255, 255, 0.65);
+  --glass-edge-lo: rgba(0, 0, 0, 0.06);
+
+  /* Font family — swapped per data-font attribute (see rules below) */
+  --font-sans: var(--font-jakarta);
+}
+
+.dark {
+  /* ---- Dark theme ---- */
   --background: oklch(0.1 0.012 264);
   --foreground: oklch(0.96 0.004 264);
   --card: oklch(0.16 0.014 264 / 55%);
@@ -87,7 +148,6 @@
   --chart-3: oklch(0.75 0.14 200);
   --chart-4: oklch(0.72 0.15 160);
   --chart-5: oklch(0.75 0.16 70);
-  --radius: 0.9rem;
   --sidebar: oklch(0.11 0.013 264 / 70%);
   --sidebar-foreground: oklch(0.93 0.004 264);
   --sidebar-primary: oklch(0.65 0.19 262);
@@ -97,7 +157,6 @@
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.65 0.19 262 / 55%);
 
-  /* Accent colors — cool blue / violet / cyan family, plus status accents */
   --accent-blue: oklch(0.65 0.19 262);
   --accent-violet: oklch(0.64 0.22 300);
   --accent-cyan: oklch(0.78 0.13 200);
@@ -105,41 +164,44 @@
   --accent-amber: oklch(0.79 0.15 80);
   --accent-rose: oklch(0.68 0.19 18);
 
-  /* Glass surface tokens */
   --glass-bg: rgba(255, 255, 255, 0.035);
   --glass-bg-hover: rgba(255, 255, 255, 0.06);
   --glass-bg-active: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.09);
   --glass-border-strong: rgba(255, 255, 255, 0.16);
+  --glass-sheen: rgba(255, 255, 255, 0.09);
+  --glass-sheen-strong: rgba(255, 255, 255, 0.12);
+  --glass-edge-hi: rgba(255, 255, 255, 0.1);
+  --glass-edge-lo: rgba(0, 0, 0, 0.25);
 }
 
-.dark {
-  --background: oklch(0.1 0.012 264);
-  --foreground: oklch(0.96 0.004 264);
-  --card: oklch(0.16 0.014 264 / 55%);
-  --card-foreground: oklch(0.96 0.004 264);
-  --popover: oklch(0.13 0.014 264);
-  --popover-foreground: oklch(0.96 0.004 264);
-  --primary: oklch(0.65 0.19 262);
-  --primary-foreground: oklch(0.99 0.002 264);
-  --secondary: oklch(0.22 0.014 264);
-  --secondary-foreground: oklch(0.93 0.004 264);
-  --muted: oklch(0.2 0.012 264);
-  --muted-foreground: oklch(0.63 0.014 264);
-  --accent: oklch(0.24 0.02 264);
-  --accent-foreground: oklch(0.96 0.004 264);
-  --destructive: oklch(0.62 0.21 25);
-  --border: oklch(1 0 0 / 8%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.65 0.19 262 / 55%);
-  --sidebar: oklch(0.11 0.013 264 / 70%);
-  --sidebar-foreground: oklch(0.93 0.004 264);
-  --sidebar-primary: oklch(0.65 0.19 262);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(1 0 0 / 6%);
-  --sidebar-accent-foreground: oklch(0.96 0.004 264);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.65 0.19 262 / 55%);
+/* ---- Font family switching (data-font on <html>) ---- */
+html[data-font="jakarta"] {
+  --font-sans: var(--font-jakarta);
+}
+html[data-font="inter"] {
+  --font-sans: var(--font-inter);
+}
+html[data-font="geist"] {
+  --font-sans: var(--font-geist);
+}
+html[data-font="manrope"] {
+  --font-sans: var(--font-manrope);
+}
+
+/* ---- Font size scale (data-font-size on <html>) ----
+   Root font-size drives every rem-based Tailwind utility app-wide. */
+html[data-font-size="sm"] {
+  font-size: 15px;
+}
+html[data-font-size="md"] {
+  font-size: 16.5px;
+}
+html[data-font-size="lg"] {
+  font-size: 18px;
+}
+html[data-font-size="xl"] {
+  font-size: 19.5px;
 }
 
 @layer base {
@@ -149,21 +211,38 @@
 
   html {
     @apply font-sans;
+    color-scheme: light;
+  }
+
+  html.dark {
     color-scheme: dark;
   }
 
   body {
     @apply bg-background text-foreground min-h-full;
     background-image:
-      radial-gradient(ellipse 900px 600px at 12% -10%, oklch(0.4 0.13 262 / 28%), transparent 60%),
-      radial-gradient(ellipse 800px 560px at 88% 0%, oklch(0.36 0.16 300 / 22%), transparent 55%),
-      radial-gradient(ellipse 1000px 700px at 50% 110%, oklch(0.3 0.1 200 / 14%), transparent 60%),
-      linear-gradient(180deg, oklch(0.095 0.012 264) 0%, oklch(0.075 0.01 264) 100%);
+      radial-gradient(ellipse 900px 600px at 12% -10%, oklch(0.85 0.07 262 / 35%), transparent 60%),
+      radial-gradient(ellipse 800px 560px at 88% 0%, oklch(0.85 0.09 300 / 28%), transparent 55%),
+      radial-gradient(ellipse 1000px 700px at 50% 110%, oklch(0.88 0.06 200 / 22%), transparent 60%),
+      linear-gradient(180deg, oklch(0.985 0.004 260) 0%, oklch(0.96 0.007 264) 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
   }
 
+  .dark body {
+    background-image:
+      radial-gradient(ellipse 900px 600px at 12% -10%, oklch(0.4 0.13 262 / 28%), transparent 60%),
+      radial-gradient(ellipse 800px 560px at 88% 0%, oklch(0.36 0.16 300 / 22%), transparent 55%),
+      radial-gradient(ellipse 1000px 700px at 50% 110%, oklch(0.3 0.1 200 / 14%), transparent 60%),
+      linear-gradient(180deg, oklch(0.095 0.012 264) 0%, oklch(0.075 0.01 264) 100%);
+  }
+
   ::selection {
+    background: oklch(0.52 0.19 262 / 25%);
+    color: oklch(0.15 0.02 264);
+  }
+
+  .dark ::selection {
     background: oklch(0.65 0.19 262 / 35%);
     color: oklch(0.98 0 0);
   }
@@ -171,7 +250,7 @@
   /* Slim, glassy scrollbars */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+    scrollbar-color: rgba(0, 0, 0, 0.16) transparent;
   }
   *::-webkit-scrollbar {
     width: 8px;
@@ -181,10 +260,20 @@
     background: transparent;
   }
   *::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.14);
     border-radius: 999px;
   }
   *::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.24);
+  }
+
+  .dark * {
+    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+  }
+  .dark *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .dark *::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.22);
   }
 }
@@ -195,7 +284,7 @@
     background-color: var(--glass-bg);
     background-image: linear-gradient(
       155deg,
-      rgba(255, 255, 255, 0.06) 0%,
+      var(--glass-sheen) 0%,
       rgba(255, 255, 255, 0.015) 28%,
       rgba(255, 255, 255, 0) 55%
     );
@@ -208,7 +297,7 @@
     background-color: var(--glass-bg-active);
     background-image: linear-gradient(
       155deg,
-      rgba(255, 255, 255, 0.09) 0%,
+      var(--glass-sheen-strong) 0%,
       rgba(255, 255, 255, 0.02) 30%,
       rgba(255, 255, 255, 0) 58%
     );
@@ -220,9 +309,17 @@
   /* Hairline inner highlight + base shadow to sell the "liquid glass" edge thickness */
   .glass-edge {
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+      inset 0 1px 0 0 var(--glass-edge-hi),
       inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-      inset 0 -1px 0 0 rgba(0, 0, 0, 0.25),
+      inset 0 -1px 0 0 var(--glass-edge-lo),
+      0 1px 2px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .glass-edge {
+    box-shadow:
+      inset 0 1px 0 0 var(--glass-edge-hi),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+      inset 0 -1px 0 0 var(--glass-edge-lo),
       0 1px 2px 0 rgba(0, 0, 0, 0.2);
   }
 

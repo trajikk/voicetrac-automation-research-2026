@@ -55,7 +55,7 @@ export function TerritoryCard({ territory }: { territory: Territory }) {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-2.5 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+          <div className="flex flex-col gap-2.5 rounded-xl border border-black/[0.096] dark:border-white/[0.06] bg-black/[0.032] dark:bg-white/[0.02] p-3">
             <div className="flex items-center gap-2.5 text-xs text-foreground/85">
               <Building2 className="size-3.5 shrink-0 text-muted-foreground" />
               <span className="truncate font-medium">{territory.lockedBy}</span>

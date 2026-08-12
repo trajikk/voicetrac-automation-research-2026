@@ -75,7 +75,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-panel-strong border-white/[0.09] sm:max-w-lg">
+      <DialogContent className="glass-panel-strong border-black/[0.144] dark:border-white/[0.09] sm:max-w-lg">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="mb-1 flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent-blue via-accent-violet to-accent-cyan">
@@ -96,7 +96,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.company}
                 onChange={(e) => update("company", e.target.value)}
                 placeholder="e.g. Summit Ridge Dental"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -107,7 +107,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.niche}
                 onChange={(e) => update("niche", e.target.value)}
                 placeholder="e.g. Dental"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -118,7 +118,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.contactName}
                 onChange={(e) => update("contactName", e.target.value)}
                 placeholder="e.g. Dr. Melissa Hart"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -129,7 +129,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.city}
                 onChange={(e) => update("city", e.target.value)}
                 placeholder="e.g. Austin"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -140,7 +140,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.state}
                 onChange={(e) => update("state", e.target.value)}
                 placeholder="e.g. TX"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -151,7 +151,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.phone}
                 onChange={(e) => update("phone", e.target.value)}
                 placeholder="(512) 555-0148"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -162,7 +162,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.website}
                 onChange={(e) => update("website", e.target.value)}
                 placeholder="company.com"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -174,7 +174,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.email}
                 onChange={(e) => update("email", e.target.value)}
                 placeholder="contact@company.com"
-                className="border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
 
@@ -185,7 +185,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
                 value={form.notes}
                 onChange={(e) => update("notes", e.target.value)}
                 placeholder="Anything worth remembering about this lead…"
-                className="min-h-20 border-white/[0.08] bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+                className="min-h-20 border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
             </div>
           </div>
@@ -195,7 +195,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
               type="button"
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+              className="text-muted-foreground hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground"
             >
               Cancel
             </Button>

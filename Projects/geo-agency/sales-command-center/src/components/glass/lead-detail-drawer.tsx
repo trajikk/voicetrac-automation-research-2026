@@ -44,7 +44,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3 py-2.5">
-      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] text-muted-foreground">
+      <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-black/[0.064] dark:bg-white/[0.04] text-muted-foreground">
         <Icon className="size-4" />
       </div>
       <div className="min-w-0">
@@ -63,9 +63,9 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="glass-panel-strong w-full border-l border-white/[0.09] p-0 sm:max-w-md [&>button]:text-muted-foreground [&>button]:hover:text-foreground"
+        className="glass-panel-strong w-full border-l border-black/[0.144] dark:border-white/[0.09] p-0 sm:max-w-md [&>button]:text-muted-foreground [&>button]:hover:text-foreground"
       >
-        <SheetHeader className="border-b border-white/[0.07] px-6 py-5">
+        <SheetHeader className="border-b border-black/[0.112] dark:border-white/[0.07] px-6 py-5">
           <div className="flex items-start gap-4">
             <div
               className={cn(
@@ -107,7 +107,7 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
           <p className="mb-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
             Contact
           </p>
-          <div className="divide-y divide-white/[0.06]">
+          <div className="divide-y divide-black/[0.096] dark:divide-white/[0.06]">
             <InfoRow icon={Building2} label="Contact name" value={lead.contactName} />
             <InfoRow icon={Phone} label="Phone" value={lead.phone} />
             <InfoRow icon={Mail} label="Email" value={lead.email} />
@@ -116,7 +116,7 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
             <InfoRow icon={Calendar} label="Last contact" value={formatDate(lead.lastContact)} />
           </div>
 
-          <Separator className="my-5 bg-white/[0.07]" />
+          <Separator className="my-5 bg-black/[0.112] dark:bg-white/[0.07]" />
 
           {/* Competitors */}
           <div className="mb-5">
@@ -127,7 +127,7 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
               {lead.competitors.map((c) => (
                 <span
                   key={c}
-                  className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-muted-foreground"
+                  className="rounded-full border border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] px-3 py-1 text-xs text-muted-foreground"
                 >
                   {c}
                 </span>
@@ -147,21 +147,21 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
         </div>
 
         {/* Actions */}
-        <div className="grid grid-cols-2 gap-2.5 border-t border-white/[0.07] px-6 py-5">
+        <div className="grid grid-cols-2 gap-2.5 border-t border-black/[0.112] dark:border-white/[0.07] px-6 py-5">
           <Button className="col-span-2 bg-gradient-to-r from-accent-blue to-accent-violet text-white shadow-[0_4px_20px_-6px_var(--accent-violet)] hover:opacity-90">
             <Calendar className="size-4" />
             Schedule Demo
           </Button>
           <Button
             variant="outline"
-            className="border-white/10 bg-white/[0.03] text-foreground/90 hover:bg-white/[0.07]"
+            className="border-black/16 dark:border-white/10 bg-black/[0.048] dark:bg-white/[0.03] text-foreground/90 hover:bg-black/[0.112] dark:hover:bg-white/[0.07]"
           >
             <Phone className="size-4" />
             Call
           </Button>
           <Button
             variant="outline"
-            className="border-white/10 bg-white/[0.03] text-foreground/90 hover:bg-white/[0.07]"
+            className="border-black/16 dark:border-white/10 bg-black/[0.048] dark:bg-white/[0.03] text-foreground/90 hover:bg-black/[0.112] dark:hover:bg-white/[0.07]"
           >
             <Mail className="size-4" />
             Email

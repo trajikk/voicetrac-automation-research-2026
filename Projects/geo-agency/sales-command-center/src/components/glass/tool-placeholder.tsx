@@ -28,7 +28,7 @@ export function ToolPlaceholder({
         asChild
         variant="ghost"
         size="sm"
-        className="w-fit text-muted-foreground hover:bg-white/[0.06] hover:text-foreground"
+        className="w-fit text-muted-foreground hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground"
       >
         <Link href="/tools">
           <ArrowLeft className="size-3.5" />
@@ -56,7 +56,7 @@ export function ToolPlaceholder({
           <h2 className="text-xl font-semibold tracking-tight text-foreground">{name}</h2>
           <p className="mt-2 max-w-md text-sm text-muted-foreground">{description}</p>
 
-          <div className="mt-6 flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-4 py-1.5 text-xs text-muted-foreground">
+          <div className="mt-6 flex items-center gap-2 rounded-full border border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] px-4 py-1.5 text-xs text-muted-foreground">
             <Construction className="size-3.5" />
             {status === "active" ? "Interactive workspace in development" : "Coming soon"}
           </div>

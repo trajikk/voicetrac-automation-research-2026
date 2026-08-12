@@ -35,9 +35,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent
           side="left"
-          className="glass-panel-strong w-72 border-r border-white/[0.08] p-0 [&>button]:text-muted-foreground"
+          className="glass-panel-strong w-72 border-r border-black/[0.128] dark:border-white/[0.08] p-0 [&>button]:text-muted-foreground"
         >
-          <SheetHeader className="border-b border-white/[0.07] px-5 py-4">
+          <SheetHeader className="border-b border-black/[0.112] dark:border-white/[0.07] px-5 py-4">
             <SheetTitle className="flex items-center gap-3 text-left">
               <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent-blue via-accent-violet to-accent-cyan">
                 <Sparkles className="size-4 text-white" />
@@ -56,10 +56,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-colors",
                     active
                       ? "border border-accent-blue/25 bg-gradient-to-r from-accent-blue/15 via-accent-violet/10 to-transparent text-foreground"
-                      : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
+                      : "text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.05] hover:text-foreground",
                   )}
                 >
                   <Icon className={cn("size-[18px]", active && "text-accent-cyan")} />

@@ -31,7 +31,7 @@ export default function TerritoriesPage() {
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground">
           Exclusive Territories
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -73,7 +73,7 @@ export default function TerritoriesPage() {
               "rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors",
               filter === f
                 ? "border-accent-blue/30 bg-accent-blue/12 text-accent-blue"
-                : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
+                : "border-black/[0.128] dark:border-white/[0.08] bg-black/[0.032] dark:bg-white/[0.02] text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.05] hover:text-foreground",
             )}
           >
             {f}
@@ -91,8 +91,8 @@ export default function TerritoriesPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] py-20 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-white/[0.04] text-muted-foreground">
+        <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-black/[0.096] dark:border-white/[0.06] bg-black/[0.032] dark:bg-white/[0.02] py-20 text-center">
+          <div className="flex size-12 items-center justify-center rounded-full bg-black/[0.064] dark:bg-white/[0.04] text-muted-foreground">
             <MapPinned className="size-5" />
           </div>
           <p className="text-sm text-muted-foreground">No territories match this filter.</p>

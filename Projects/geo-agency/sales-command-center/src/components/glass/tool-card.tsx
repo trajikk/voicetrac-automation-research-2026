@@ -28,7 +28,7 @@ export function ToolCard({ tool }: { tool: ToolItem }) {
           <Icon className="size-5" />
         </div>
         {comingSoon ? (
-          <span className="rounded-full border border-white/[0.08] bg-white/[0.04] px-2.5 py-1 text-[11px] text-muted-foreground">
+          <span className="rounded-full border border-black/[0.128] dark:border-white/[0.08] bg-black/[0.064] dark:bg-white/[0.04] px-2.5 py-1 text-[11px] text-muted-foreground">
             Coming Soon
           </span>
         ) : (

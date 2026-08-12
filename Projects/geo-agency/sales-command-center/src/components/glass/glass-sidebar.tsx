@@ -39,7 +39,7 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
       initial={false}
       animate={{ width: collapsed ? 84 : 264 }}
       transition={{ type: "spring", stiffness: 300, damping: 32 }}
-      className="glass-panel-strong glass-edge relative z-20 hidden h-svh shrink-0 flex-col border-r border-white/[0.07] lg:flex"
+      className="glass-panel-strong glass-edge relative z-20 hidden h-svh shrink-0 flex-col border-r border-black/[0.112] dark:border-white/[0.07] lg:flex"
     >
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-5">
@@ -48,17 +48,17 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
         </div>
         {!collapsed && (
           <div className="flex min-w-0 flex-col">
-            <span className="truncate text-sm font-semibold tracking-tight text-foreground">
+            <span className="truncate text-[15px] font-semibold tracking-tight text-foreground">
               GEO Command
             </span>
-            <span className="truncate text-[11px] text-muted-foreground">
+            <span className="truncate text-xs text-muted-foreground">
               Sales Operations
             </span>
           </div>
         )}
       </div>
 
-      <div className="mx-4 h-px bg-white/[0.07]" />
+      <div className="mx-4 h-px bg-black/[0.112] dark:bg-white/[0.07]" />
 
       {/* Nav */}
       <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
@@ -72,7 +72,7 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-medium transition-all duration-200",
                 active
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
@@ -111,7 +111,7 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
         })}
       </nav>
 
-      <div className="mx-4 h-px bg-white/[0.07]" />
+      <div className="mx-4 h-px bg-black/[0.112] dark:bg-white/[0.07]" />
 
       {/* Footer / user + collapse toggle */}
       <div className="flex items-center gap-3 px-3 py-4">
@@ -123,7 +123,7 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
             <span className="truncate text-sm font-medium text-foreground">
               Fred Caldero
             </span>
-            <span className="truncate text-[11px] text-muted-foreground">
+            <span className="truncate text-xs text-muted-foreground">
               Founder
             </span>
           </div>
@@ -131,7 +131,7 @@ export function GlassSidebar({ collapsed, onToggle }: GlassSidebarProps) {
         <button
           type="button"
           onClick={onToggle}
-          className="flex size-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground"
+          className="flex size-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-black/[0.096] dark:hover:bg-white/[0.06] hover:text-foreground"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <ChevronsLeft

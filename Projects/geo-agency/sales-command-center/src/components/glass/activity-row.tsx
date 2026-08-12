@@ -46,9 +46,9 @@ export function ActivityRow({ item }: { item: ActivityItem }) {
             {formatRelativeDate(item.timestamp)}
           </span>
         </div>
-        <p className="mt-0.5 truncate text-xs text-muted-foreground">{item.description}</p>
+        <p className="mt-0.5 truncate text-sm text-muted-foreground">{item.description}</p>
         {item.leadCompany && (
-          <span className="mt-1.5 inline-flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[11px] text-muted-foreground">
+          <span className="mt-1.5 inline-flex items-center rounded-full border border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] px-2 py-0.5 text-[11px] text-muted-foreground">
             {item.leadCompany}
           </span>
         )}
