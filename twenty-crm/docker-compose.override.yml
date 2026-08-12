@@ -1,0 +1,22 @@
+## Sandbox-only override.
+##
+## Anonymous `docker pull` against registry-1.docker.io is rate-limited
+## (HTTP 429) from this research environment's shared egress IP. This
+## override repoints the three upstream images at Google's public
+## read-through mirror of Docker Hub (mirror.gcr.io), which is not subject
+## to that limit, while keeping docker-compose.yml identical to upstream.
+##
+## On a normal host with unrestricted Docker Hub access, delete this file
+## (or run `docker compose -f docker-compose.yml ...` directly) and the
+## stock upstream images are used instead.
+name: twenty
+
+services:
+  server:
+    image: mirror.gcr.io/twentycrm/twenty:${TAG:-latest}
+  worker:
+    image: mirror.gcr.io/twentycrm/twenty:${TAG:-latest}
+  db:
+    image: mirror.gcr.io/library/postgres:16
+  redis:
+    image: mirror.gcr.io/library/redis

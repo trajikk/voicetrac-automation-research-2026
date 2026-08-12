@@ -10,3 +10,6 @@ agent-reach/.env
 agent-reach/.agent-reach/
 agent-reach/*.log
 agent-reach/.venv/
+
+# twenty-crm
+twenty-crm/.env
