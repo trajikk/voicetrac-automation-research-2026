@@ -8,6 +8,12 @@ export type LeadStatus =
 
 export type ExclusiveStatus = "Exclusive Locked" | "Available" | "Pending Lock";
 
+export interface LeadNote {
+  id: string;
+  body: string;
+  createdAt: string; // ISO datetime
+}
+
 export interface Lead {
   id: string;
   company: string;
@@ -21,7 +27,8 @@ export interface Lead {
   email: string;
   website: string;
   competitors: string[];
-  notes: string;
+  background: string;
+  notes: LeadNote[];
   lastContact: string; // ISO date
   dealValue: number; // MRR in USD
   source: string;

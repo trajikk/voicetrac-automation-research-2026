@@ -7,10 +7,10 @@ import {
   Globe,
   Mail,
   MapPin,
+  NotebookText,
   Phone,
   Radar,
   ShieldCheck,
-  StickyNote,
 } from "lucide-react";
 import type { Lead } from "@/lib/types";
 import { getAccent } from "@/lib/accent";
@@ -26,11 +26,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ExclusiveStatusBadge, LeadStatusBadge } from "@/components/glass/status-badge";
+import { LeadNotesPanel } from "@/components/glass/lead-notes-panel";
 
 interface LeadDetailDrawerProps {
   lead: Lead | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onAddNote: (leadId: string, body: string) => void;
 }
 
 function InfoRow({
@@ -55,7 +57,7 @@ function InfoRow({
   );
 }
 
-export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerProps) {
+export function LeadDetailDrawer({ lead, open, onOpenChange, onAddNote }: LeadDetailDrawerProps) {
   if (!lead) return null;
   const accent = getAccent(lead.avatarAccent);
 
@@ -135,14 +137,24 @@ export function LeadDetailDrawer({ lead, open, onOpenChange }: LeadDetailDrawerP
             </div>
           </div>
 
+          {/* Background */}
+          <div className="mb-5">
+            <p className="mb-2.5 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+              Background
+            </p>
+            <p className="glass-panel glass-edge rounded-xl px-4 py-3.5 text-sm leading-relaxed text-foreground/80">
+              {lead.background}
+            </p>
+          </div>
+
+          <Separator className="my-5 bg-black/[0.112] dark:bg-white/[0.07]" />
+
           {/* Notes */}
           <div className="mb-2">
             <p className="mb-2.5 flex items-center gap-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
-              <StickyNote className="size-3.5" /> Notes
+              <NotebookText className="size-3.5" /> Notes
             </p>
-            <p className="glass-panel glass-edge rounded-xl px-4 py-3.5 text-sm leading-relaxed text-foreground/80">
-              {lead.notes}
-            </p>
+            <LeadNotesPanel key={lead.id} lead={lead} onAddNote={onAddNote} />
           </div>
         </div>
 

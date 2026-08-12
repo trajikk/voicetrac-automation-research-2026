@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Search, Users } from "lucide-react";
-import { leads as initialLeads } from "@/lib/mock-data";
+import { loadLeads, saveLeads } from "@/lib/leads-store";
+import { leads as seedLeads } from "@/lib/mock-data";
 import type { Lead, LeadStatus } from "@/lib/types";
 import { GlassCard } from "@/components/glass/glass-card";
 import { LeadRow } from "@/components/glass/lead-row";
@@ -27,18 +28,32 @@ function LeadsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [leadsData, setLeadsData] = useState<Lead[]>(initialLeads);
+  // Seed with static mock data so server and client render identically on
+  // first paint, then swap in whatever's in localStorage right after mount.
+  // (Reading localStorage inside the initializer would desync SSR vs. client
+  // output and trigger a hydration mismatch, since it's unavailable on the
+  // server.)
+  const [leadsData, setLeadsData] = useState<Lead[]>(seedLeads);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "All">("All");
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [quickAddOpen, setQuickAddOpen] = useState(() => searchParams.get("new") === "1");
+
+  const selectedLead = leadsData.find((lead) => lead.id === selectedLeadId) ?? null;
 
   useEffect(() => {
     if (searchParams.get("new") === "1") {
       router.replace("/leads");
     }
   }, [searchParams, router]);
+
+  useEffect(() => {
+    // Hydrating persisted leads from localStorage post-mount; can't be done
+    // in the initializer without a server/client mismatch (see comment above).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLeadsData(loadLeads());
+  }, []);
 
   const filteredLeads = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -55,12 +70,31 @@ function LeadsPageInner() {
   }, [leadsData, query, statusFilter]);
 
   function handleSelect(lead: Lead) {
-    setSelectedLead(lead);
+    setSelectedLeadId(lead.id);
     setDrawerOpen(true);
   }
 
   function handleAdd(lead: Lead) {
-    setLeadsData((prev) => [lead, ...prev]);
+    const next = [lead, ...leadsData];
+    setLeadsData(next);
+    saveLeads(next);
+  }
+
+  function handleAddNote(leadId: string, body: string) {
+    const trimmed = body.trim();
+    if (!trimmed) return;
+    const now = new Date().toISOString();
+    const next = leadsData.map((lead) =>
+      lead.id === leadId
+        ? {
+            ...lead,
+            notes: [{ id: `nt-${Date.now()}`, body: trimmed, createdAt: now }, ...lead.notes],
+            lastContact: now.slice(0, 10),
+          }
+        : lead,
+    );
+    setLeadsData(next);
+    saveLeads(next);
   }
 
   return (
@@ -150,7 +184,7 @@ function LeadsPageInner() {
                 <LeadRow
                   key={lead.id}
                   lead={lead}
-                  active={selectedLead?.id === lead.id && drawerOpen}
+                  active={selectedLeadId === lead.id && drawerOpen}
                   onSelect={handleSelect}
                 />
               ))}
@@ -166,7 +200,12 @@ function LeadsPageInner() {
         </div>
       </GlassCard>
 
-      <LeadDetailDrawer lead={selectedLead} open={drawerOpen} onOpenChange={setDrawerOpen} />
+      <LeadDetailDrawer
+        lead={selectedLead}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        onAddNote={handleAddNote}
+      />
       <QuickAddModal open={quickAddOpen} onOpenChange={setQuickAddOpen} onAdd={handleAdd} />
     </div>
   );

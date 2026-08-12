@@ -34,7 +34,7 @@ const emptyForm = {
   phone: "",
   email: "",
   website: "",
-  notes: "",
+  background: "",
 };
 
 export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps) {
@@ -61,7 +61,8 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
       email: form.email.trim(),
       website: form.website.trim(),
       competitors: [],
-      notes: form.notes.trim(),
+      background: form.background.trim(),
+      notes: [],
       lastContact: new Date().toISOString().slice(0, 10),
       dealValue: 0,
       source: "Manual Entry",
@@ -179,11 +180,11 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
             </div>
 
             <div className="col-span-2 space-y-1.5">
-              <Label htmlFor="notes">Notes</Label>
+              <Label htmlFor="background">Background</Label>
               <Textarea
-                id="notes"
-                value={form.notes}
-                onChange={(e) => update("notes", e.target.value)}
+                id="background"
+                value={form.background}
+                onChange={(e) => update("background", e.target.value)}
                 placeholder="Anything worth remembering about this lead…"
                 className="min-h-20 border-black/[0.128] dark:border-white/[0.08] bg-black/[0.048] dark:bg-white/[0.03] focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
               />
