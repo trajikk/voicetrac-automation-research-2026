@@ -9,10 +9,13 @@ import {
   MapPin,
   NotebookText,
   Phone,
+  PhoneMissed,
   Radar,
   ShieldCheck,
 } from "lucide-react";
 import type { Lead, LeadStatus } from "@/lib/types";
+import type { CallOutcome } from "@/lib/cadence";
+import { callQueueReason } from "@/lib/cadence";
 import { getAccent } from "@/lib/accent";
 import { formatCurrency, formatDate, initials } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -35,6 +38,7 @@ interface LeadDetailDrawerProps {
   onOpenChange: (open: boolean) => void;
   onAddNote: (leadId: string, body: string) => void;
   onStatusChange: (leadId: string, status: LeadStatus) => void;
+  onLogCall: (leadId: string, outcome: CallOutcome) => void;
 }
 
 function InfoRow({
@@ -65,6 +69,7 @@ export function LeadDetailDrawer({
   onOpenChange,
   onAddNote,
   onStatusChange,
+  onLogCall,
 }: LeadDetailDrawerProps) {
   if (!lead) return null;
   const accent = getAccent(lead.avatarAccent);
@@ -99,6 +104,19 @@ export function LeadDetailDrawer({
                   onChange={(status) => onStatusChange(lead.id, status)}
                 />
                 <ExclusiveStatusBadge status={lead.exclusiveStatus} />
+                {lead.nextCallDate && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap",
+                      lead.nextCallDate < new Date().toISOString().slice(0, 10)
+                        ? "border-accent-rose/25 bg-accent-rose/10 text-accent-rose"
+                        : "border-accent-amber/25 bg-accent-amber/10 text-accent-amber",
+                    )}
+                  >
+                    <PhoneMissed className="size-3" />
+                    {callQueueReason(lead)}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -165,7 +183,7 @@ export function LeadDetailDrawer({
             <p className="mb-2.5 flex items-center gap-2 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
               <NotebookText className="size-3.5" /> Notes
             </p>
-            <LeadNotesPanel key={lead.id} lead={lead} onAddNote={onAddNote} />
+            <LeadNotesPanel key={lead.id} lead={lead} onAddNote={onAddNote} onLogCall={onLogCall} />
           </div>
         </div>
 

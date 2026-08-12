@@ -31,6 +31,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-10",
     dealValue: 2400,
     source: "Cold Outbound",
+    callAttempts: 0,
     avatarAccent: "blue",
   },
   {
@@ -68,6 +69,8 @@ export const leads: Lead[] = [
     lastContact: "2026-08-11",
     dealValue: 3200,
     source: "Referral",
+    callAttempts: 2,
+    nextCallDate: "2026-08-12",
     avatarAccent: "violet",
   },
   {
@@ -89,6 +92,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-05",
     dealValue: 5000,
     source: "Inbound",
+    callAttempts: 0,
     avatarAccent: "emerald",
   },
   {
@@ -109,6 +113,8 @@ export const leads: Lead[] = [
     lastContact: "2026-08-08",
     dealValue: 1800,
     source: "Cold Outbound",
+    callAttempts: 1,
+    nextCallDate: "2026-08-12",
     avatarAccent: "cyan",
   },
   {
@@ -129,6 +135,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-12",
     dealValue: 2100,
     source: "Website Tool",
+    callAttempts: 0,
     avatarAccent: "rose",
   },
   {
@@ -149,6 +156,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-09",
     dealValue: 1600,
     source: "Referral",
+    callAttempts: 0,
     avatarAccent: "amber",
   },
   {
@@ -169,6 +177,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-11",
     dealValue: 2800,
     source: "Inbound",
+    callAttempts: 0,
     avatarAccent: "blue",
   },
   {
@@ -189,6 +198,7 @@ export const leads: Lead[] = [
     lastContact: "2026-07-28",
     dealValue: 0,
     source: "Cold Outbound",
+    callAttempts: 0,
     avatarAccent: "rose",
   },
   {
@@ -209,6 +219,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-07",
     dealValue: 2600,
     source: "LinkedIn",
+    callAttempts: 0,
     avatarAccent: "violet",
   },
   {
@@ -229,6 +240,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-10",
     dealValue: 1900,
     source: "Referral",
+    callAttempts: 0,
     avatarAccent: "cyan",
   },
   {
@@ -249,6 +261,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-12",
     dealValue: 1500,
     source: "Website Tool",
+    callAttempts: 0,
     avatarAccent: "amber",
   },
   {
@@ -269,6 +282,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-01",
     dealValue: 2200,
     source: "Inbound",
+    callAttempts: 0,
     avatarAccent: "emerald",
   },
   {
@@ -289,6 +303,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-06",
     dealValue: 2900,
     source: "Cold Outbound",
+    callAttempts: 0,
     avatarAccent: "blue",
   },
   {
@@ -309,6 +324,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-09",
     dealValue: 3400,
     source: "Referral",
+    callAttempts: 0,
     avatarAccent: "rose",
   },
   {
@@ -329,6 +345,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-11",
     dealValue: 4800,
     source: "Inbound",
+    callAttempts: 0,
     avatarAccent: "violet",
   },
   {
@@ -349,6 +366,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-12",
     dealValue: 1700,
     source: "Website Tool",
+    callAttempts: 0,
     avatarAccent: "cyan",
   },
   {
@@ -369,6 +387,7 @@ export const leads: Lead[] = [
     lastContact: "2026-08-08",
     dealValue: 2300,
     source: "Cold Outbound",
+    callAttempts: 0,
     avatarAccent: "amber",
   },
   {
@@ -389,6 +408,7 @@ export const leads: Lead[] = [
     lastContact: "2026-07-22",
     dealValue: 0,
     source: "Referral",
+    callAttempts: 0,
     avatarAccent: "rose",
   },
 ];

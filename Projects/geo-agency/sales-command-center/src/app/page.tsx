@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Users,
@@ -12,14 +13,27 @@ import {
   ScanSearch,
   ArrowUpRight,
 } from "lucide-react";
-import { leads, territories, activityFeed } from "@/lib/mock-data";
+import { leads as seedLeads, territories, activityFeed } from "@/lib/mock-data";
+import { loadLeads } from "@/lib/leads-store";
+import type { Lead } from "@/lib/types";
 import { formatCurrency } from "@/lib/format";
 import { StatCard } from "@/components/glass/stat-card";
 import { GlassCard, GlassCardHeader, GlassCardTitle } from "@/components/glass/glass-card";
 import { ActivityRow } from "@/components/glass/activity-row";
+import { CallQueueCard } from "@/components/glass/call-queue-card";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
+  // Same hydration pattern as the Leads page: seed with static mock data so
+  // server/client match on first paint, then swap in the persisted copy
+  // right after mount (localStorage isn't available during SSR).
+  const [leads, setLeads] = useState<Lead[]>(seedLeads);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLeads(loadLeads());
+  }, []);
+
   const totalLeads = leads.length;
   const demosThisWeek = leads.filter((l) => l.status === "Demo Scheduled").length;
   const lockedTerritories = territories.filter((t) => t.status !== "Available").length;
@@ -82,6 +96,9 @@ export default function DashboardPage() {
           trendDirection="neutral"
         />
       </div>
+
+      {/* Call queue */}
+      <CallQueueCard leads={leads} />
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         {/* Recent activity */}

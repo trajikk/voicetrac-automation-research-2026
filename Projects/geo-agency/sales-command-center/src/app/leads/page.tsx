@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, Search, Users } from "lucide-react";
 import { loadLeads, saveLeads } from "@/lib/leads-store";
 import { leads as seedLeads } from "@/lib/mock-data";
+import { applyCallOutcome, type CallOutcome } from "@/lib/cadence";
 import type { Lead, LeadStatus } from "@/lib/types";
 import { GlassCard } from "@/components/glass/glass-card";
 import { LeadRow } from "@/components/glass/lead-row";
@@ -36,14 +37,16 @@ function LeadsPageInner() {
   const [leadsData, setLeadsData] = useState<Lead[]>(seedLeads);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "All">("All");
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(() =>
+    searchParams.get("open"),
+  );
+  const [drawerOpen, setDrawerOpen] = useState(() => Boolean(searchParams.get("open")));
   const [quickAddOpen, setQuickAddOpen] = useState(() => searchParams.get("new") === "1");
 
   const selectedLead = leadsData.find((lead) => lead.id === selectedLeadId) ?? null;
 
   useEffect(() => {
-    if (searchParams.get("new") === "1") {
+    if (searchParams.get("new") === "1" || searchParams.get("open")) {
       router.replace("/leads");
     }
   }, [searchParams, router]);
@@ -110,6 +113,14 @@ function LeadsPageInner() {
         ],
       };
     });
+    setLeadsData(next);
+    saveLeads(next);
+  }
+
+  function handleLogCall(leadId: string, outcome: CallOutcome) {
+    const next = leadsData.map((lead) =>
+      lead.id === leadId ? applyCallOutcome(lead, outcome) : lead,
+    );
     setLeadsData(next);
     saveLeads(next);
   }
@@ -223,6 +234,7 @@ function LeadsPageInner() {
         onOpenChange={setDrawerOpen}
         onAddNote={handleAddNote}
         onStatusChange={handleStatusChange}
+        onLogCall={handleLogCall}
       />
       <QuickAddModal open={quickAddOpen} onOpenChange={setQuickAddOpen} onAdd={handleAdd} />
     </div>

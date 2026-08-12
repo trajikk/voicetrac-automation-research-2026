@@ -33,6 +33,10 @@ export interface Lead {
   dealValue: number; // MRR in USD
   source: string;
   avatarAccent: "blue" | "violet" | "cyan" | "emerald" | "amber" | "rose";
+  /** Consecutive unanswered call attempts since the last time they picked up. Resets to 0 on answer. */
+  callAttempts: number;
+  /** ISO date this lead is next due for a call — set by the no-answer cadence. Unset once answered or burned. */
+  nextCallDate?: string;
 }
 
 export type TerritoryStatus = "Locked" | "Available" | "Reserved";

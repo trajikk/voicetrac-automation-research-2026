@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { PhoneMissed, Voicemail, Sparkles, CalendarClock, CornerDownLeft } from "lucide-react";
+import {
+  PhoneMissed,
+  Voicemail,
+  PhoneCall,
+  Sparkles,
+  CalendarClock,
+  CornerDownLeft,
+} from "lucide-react";
 import type { Lead } from "@/lib/types";
+import type { CallOutcome } from "@/lib/cadence";
 import { formatRelativeDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,16 +19,21 @@ import { cn } from "@/lib/utils";
 interface LeadNotesPanelProps {
   lead: Lead;
   onAddNote: (leadId: string, body: string) => void;
+  onLogCall: (leadId: string, outcome: CallOutcome) => void;
 }
 
-const quickTags = [
-  { label: "No Answer", icon: PhoneMissed },
-  { label: "Left Voicemail", icon: Voicemail },
+const outcomeButtons = [
+  { outcome: "no-answer" as const, label: "No Answer", icon: PhoneMissed },
+  { outcome: "voicemail" as const, label: "Left Voicemail", icon: Voicemail },
+  { outcome: "answered" as const, label: "Answered", icon: PhoneCall },
+];
+
+const freeformTags = [
   { label: "Interested", icon: Sparkles },
   { label: "Follow-up Needed", icon: CalendarClock },
-] as const;
+];
 
-export function LeadNotesPanel({ lead, onAddNote }: LeadNotesPanelProps) {
+export function LeadNotesPanel({ lead, onAddNote, onLogCall }: LeadNotesPanelProps) {
   const [draft, setDraft] = useState("");
 
   const sortedNotes = [...lead.notes].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
@@ -46,9 +59,37 @@ export function LeadNotesPanel({ lead, onAddNote }: LeadNotesPanelProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Quick tags */}
+      {/* Call outcome — one tap logs the note and drives the call cadence */}
+      <div>
+        <p className="mb-1.5 text-[11px] text-muted-foreground/80">
+          Log the call — drives the follow-up cadence
+        </p>
+        <div className="grid grid-cols-3 gap-1.5">
+          {outcomeButtons.map((btn) => {
+            const Icon = btn.icon;
+            return (
+              <button
+                key={btn.outcome}
+                type="button"
+                onClick={() => onLogCall(lead.id, btn.outcome)}
+                className={cn(
+                  "flex flex-col items-center gap-1 rounded-xl border px-2 py-2 text-[11px] font-medium transition-all duration-200",
+                  btn.outcome === "answered"
+                    ? "border-accent-emerald/25 bg-accent-emerald/[0.06] text-accent-emerald hover:bg-accent-emerald/[0.12]"
+                    : "border-accent-amber/20 bg-accent-amber/[0.05] text-accent-amber hover:bg-accent-amber/[0.1]",
+                )}
+              >
+                <Icon className="size-3.5" />
+                {btn.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Freeform quick tags */}
       <div className="flex flex-wrap gap-1.5">
-        {quickTags.map((tag) => {
+        {freeformTags.map((tag) => {
           const Icon = tag.icon;
           return (
             <button

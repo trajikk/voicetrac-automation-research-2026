@@ -66,6 +66,7 @@ export function QuickAddModal({ open, onOpenChange, onAdd }: QuickAddModalProps)
       lastContact: new Date().toISOString().slice(0, 10),
       dealValue: 0,
       source: "Manual Entry",
+      callAttempts: 0,
       avatarAccent: accents[Math.floor(Math.random() * accents.length)],
     };
 

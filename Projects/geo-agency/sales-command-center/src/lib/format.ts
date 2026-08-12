@@ -31,6 +31,16 @@ export function formatDate(iso: string): string {
   });
 }
 
+export function todayISODate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function addDaysISODate(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
 export function initials(name: string): string {
   return name
     .split(" ")
