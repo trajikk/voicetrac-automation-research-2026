@@ -27,3 +27,6 @@ context-mode/node_modules/
 
 # token-reducer plugin runtime state (created by the UserPromptSubmit guard hook)
 .cache/
+
+# claude-token-optimizer runtime session log (created by cto's Stop hook)
+.claude/sessions/
