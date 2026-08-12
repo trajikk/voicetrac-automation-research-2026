@@ -64,22 +64,39 @@ function LeadsPageInner() {
   }
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-5">
+    <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      {/* Header */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+              Leads Pipeline
+            </h2>
+            <span className="inline-flex items-center rounded-full border border-accent-blue/25 bg-accent-blue/10 px-2.5 py-0.5 text-xs font-medium text-accent-blue shadow-[0_0_14px_-4px_var(--accent-blue)]">
+              {leadsData.length} total
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Every prospect, exactly where they stand — click a row for the full picture.
+          </p>
+        </div>
+      </div>
+
       {/* Toolbar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-[15px] -translate-y-1/2 text-muted-foreground" />
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-[15px] -translate-y-1/2 text-muted-foreground transition-colors" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search company, niche, city…"
-            className="h-9 border-white/[0.08] bg-white/[0.03] pl-9 placeholder:text-muted-foreground/70 focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/20"
+            className="h-9 border-white/[0.08] bg-white/[0.03] pl-9 placeholder:text-muted-foreground/70 transition-shadow duration-200 focus-visible:border-accent-blue/40 focus-visible:ring-accent-blue/25 focus-visible:shadow-[0_0_0_4px_oklch(0.65_0.19_262_/_10%)]"
           />
         </div>
 
         <Button
           onClick={() => setQuickAddOpen(true)}
-          className="w-full bg-gradient-to-r from-accent-blue to-accent-violet text-white shadow-[0_4px_20px_-6px_var(--accent-violet)] hover:opacity-90 sm:w-auto"
+          className="w-full bg-gradient-to-r from-accent-blue to-accent-violet text-white shadow-[0_4px_20px_-6px_var(--accent-violet)] transition-all hover:opacity-90 hover:shadow-[0_6px_28px_-6px_var(--accent-violet)] sm:w-auto"
         >
           <Plus className="size-4" />
           Quick Add Lead
@@ -94,10 +111,10 @@ function LeadsPageInner() {
             type="button"
             onClick={() => setStatusFilter(status)}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors",
+              "rounded-full border px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all duration-200",
               statusFilter === status
-                ? "border-accent-blue/30 bg-accent-blue/12 text-accent-blue"
-                : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
+                ? "border-accent-blue/30 bg-accent-blue/12 text-accent-blue shadow-[0_0_14px_-4px_var(--accent-blue)]"
+                : "border-white/[0.08] bg-white/[0.02] text-muted-foreground hover:border-white/[0.14] hover:bg-white/[0.05] hover:text-foreground",
             )}
           >
             {status}
@@ -106,8 +123,8 @@ function LeadsPageInner() {
       </div>
 
       {/* Leads list */}
-      <GlassCard noPadding>
-        <div className="hidden grid-cols-[minmax(0,2.1fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.3fr)_28px] gap-4 border-b border-white/[0.06] px-8 py-3 text-[11px] font-medium tracking-wide text-muted-foreground uppercase lg:grid">
+      <GlassCard strong noPadding className="shadow-[0_24px_60px_-24px_rgba(0,0,0,0.65)]">
+        <div className="hidden grid-cols-[minmax(0,2.1fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.3fr)_28px] gap-4 border-b border-white/[0.07] bg-white/[0.02] px-8 py-3 text-[11px] font-semibold tracking-wide text-muted-foreground/90 uppercase lg:grid">
           <span>Company</span>
           <span>Niche</span>
           <span>City</span>
@@ -117,7 +134,7 @@ function LeadsPageInner() {
           <span />
         </div>
 
-        <div className="max-h-[calc(100svh-24rem)] min-h-[24rem] overflow-y-auto px-3 py-2 lg:px-4">
+        <div className="max-h-[calc(100svh-26rem)] min-h-[24rem] overflow-y-auto px-3 py-2 lg:px-4">
           {filteredLeads.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
               <div className="flex size-12 items-center justify-center rounded-full bg-white/[0.04] text-muted-foreground">
@@ -128,20 +145,23 @@ function LeadsPageInner() {
               </p>
             </div>
           ) : (
-            filteredLeads.map((lead) => (
-              <LeadRow
-                key={lead.id}
-                lead={lead}
-                active={selectedLead?.id === lead.id && drawerOpen}
-                onSelect={handleSelect}
-              />
-            ))
+            <div className="divide-y divide-white/[0.045]">
+              {filteredLeads.map((lead) => (
+                <LeadRow
+                  key={lead.id}
+                  lead={lead}
+                  active={selectedLead?.id === lead.id && drawerOpen}
+                  onSelect={handleSelect}
+                />
+              ))}
+            </div>
           )}
         </div>
 
-        <div className="flex items-center justify-between border-t border-white/[0.06] px-6 py-3 text-xs text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-white/[0.07] bg-white/[0.015] px-6 py-3 text-xs text-muted-foreground">
           <span>
-            Showing {filteredLeads.length} of {leadsData.length} leads
+            Showing <span className="text-foreground/80">{filteredLeads.length}</span> of{" "}
+            {leadsData.length} leads
           </span>
         </div>
       </GlassCard>
