@@ -66,3 +66,57 @@ arbitrary web pages via Jina Reader, V2EX). The rest need optional installs
 — run `agent-reach setup` for the interactive wizard, or `agent-reach doctor`
 to see the current gaps. No API keys or secrets were configured or committed
 as part of this vendoring.
+
+# mcp-apple-notes setup
+
+This repo also vendors [RafalWilinski/mcp-apple-notes](https://github.com/RafalWilinski/mcp-apple-notes)
+under `mcp-apple-notes/`. It's a Model Context Protocol server that gives
+Claude Desktop semantic search / RAG over Apple Notes, using on-device
+`all-MiniLM-L6-v2` embeddings (via `@huggingface/transformers`), LanceDB for
+vector storage, and JXA (JavaScript for Automation) to talk to the Notes.app
+on macOS.
+
+## Setup performed
+
+```bash
+cd mcp-apple-notes
+bun install
+bun pm trust onnxruntime-node protobufjs   # blocked postinstall scripts, both standard for these packages
+npx tsx index.test.ts
+```
+
+`bun install` and `bun build index.ts --outdir dist --target node` both
+completed successfully (`node_modules/` and `dist/` are gitignored via the
+vendored `mcp-apple-notes/.gitignore` and not committed). The test suite
+passes everything that doesn't require live macOS Notes access:
+
+```
+# tests 4
+# pass 3
+# fail 0
+# skipped 1   (the real-Notes indexing test, skipped when JXA/osascript isn't available)
+```
+
+Table creation, embedding, and vector search all work as-is on Linux since
+they don't touch macOS APIs.
+
+## Known gap: this is a macOS-only tool at runtime
+
+This container is Linux, so the server was verified to install, build, and
+pass its non-macOS tests, but it was **not** run end-to-end as a live MCP
+server here:
+
+- The Apple Notes read/write tools shell out to `osascript`/JXA against
+  Notes.app, which only exists on macOS. There is no Notes app to index in
+  this sandbox.
+- On first run the server downloads the `all-MiniLM-L6-v2` embeddings model
+  from Hugging Face; in this sandbox that download hit `ECONNRESET` through
+  the environment's outbound proxy (`bun`'s fetch vs. the proxy), even
+  though plain `curl` to the same host worked. On a real machine with normal
+  network access this is expected to succeed as documented upstream.
+
+To actually use it, follow the upstream README on a Mac: install Bun and
+Claude Desktop, then point `claude_desktop_config.json`'s `mcpServers` entry
+at this vendored `mcp-apple-notes/index.ts` with the local `bun` binary path.
+No API keys or secrets were configured or committed as part of this
+vendoring.
