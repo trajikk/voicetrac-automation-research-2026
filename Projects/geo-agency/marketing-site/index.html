@@ -3,448 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Phosphor — AI Visibility &amp; GEO Agency</title>
-<meta name="description" content="Phosphor tracks, analyzes, and improves how your brand shows up inside ChatGPT, Perplexity, Gemini, and Google AI Overviews." />
+<title>Scanline — AI Visibility, Voice Automation &amp; Sales Consulting</title>
+<meta name="description" content="Scanline helps brands get found by AI, answers and qualifies calls with AI voice agents, and rebuilds sales processes for efficiency." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-void: #0a0c0b;
-    --bg-charcoal: #17191a;
-    --bg-charcoal-2: #202323;
-    --border: #2c302e;
-    --border-bright: #3a4640;
-    --ink: #eaeeec;
-    --ink-dim: #949e98;
-    --ink-faint: #5f6864;
-    --phosphor: #45ff9b;
-    --phosphor-soft: #a9ffcf;
-    --phosphor-dim: #1f8f57;
-    --phosphor-glow: rgba(69,255,155,0.35);
-    --danger-red: #ff5d5d;
-
-    --font-display: "Bricolage Grotesque", "Arial Black", sans-serif;
-    --font-body: "Manrope", -apple-system, "Segoe UI", sans-serif;
-    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
-
-    --container: 1180px;
-  }
-
-  *,*::before,*::after{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior:auto; }
-    *,*::before,*::after{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
-  }
-
-  body{
-    margin:0;
-    background:var(--bg-void);
-    color:var(--ink);
-    font-family:var(--font-body);
-    font-size:16px;
-    line-height:1.6;
-    -webkit-font-smoothing:antialiased;
-  }
-
-  img,svg{ max-width:100%; display:block; }
-
-  .wrap{ width:100%; max-width:var(--container); margin:0 auto; padding:0 24px; }
-
-  h1,h2,h3{
-    font-family:var(--font-display);
-    font-weight:700;
-    line-height:1.05;
-    letter-spacing:-0.01em;
-    text-wrap:balance;
-    margin:0;
-    color:#fff;
-  }
-
-  a{ color:inherit; }
-
-  .eyebrow{
-    font-family:var(--font-mono);
-    font-size:12.5px;
-    font-weight:600;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--phosphor);
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-  }
-  .eyebrow::before{
-    content:"";
-    width:6px; height:6px;
-    background:var(--phosphor);
-    border-radius:50%;
-    box-shadow:0 0 8px 1px var(--phosphor-glow);
-  }
-
-  .btn{
-    font-family:var(--font-mono);
-    font-size:13.5px;
-    font-weight:600;
-    letter-spacing:0.03em;
-    text-transform:uppercase;
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:14px 24px;
-    border-radius:3px;
-    border:1px solid transparent;
-    cursor:pointer;
-    transition:transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-    white-space:nowrap;
-  }
-  .btn:focus-visible{ outline:2px solid var(--phosphor); outline-offset:3px; }
-  .btn-primary{
-    background:var(--phosphor);
-    color:#03150c;
-    box-shadow:0 0 0 1px var(--phosphor-dim), 0 8px 24px -8px var(--phosphor-glow);
-  }
-  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 0 0 1px var(--phosphor), 0 10px 28px -6px var(--phosphor-glow); }
-  .btn-ghost{
-    background:transparent;
-    color:var(--ink);
-    border-color:var(--border-bright);
-  }
-  .btn-ghost:hover{ border-color:var(--phosphor-dim); color:var(--phosphor-soft); }
-
-  /* ---------- Nav ---------- */
-  header{
-    position:sticky; top:0; z-index:50;
-    background:rgba(10,12,11,0.85);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-  }
-  .nav{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 0;
-  }
-  .logo{
-    display:flex; align-items:center; gap:10px;
-    font-family:var(--font-mono);
-    font-weight:600;
-    font-size:17px;
-    letter-spacing:0.02em;
-    text-decoration:none;
-    color:var(--ink);
-  }
-  .logo-dot{
-    width:9px; height:9px; border-radius:50%;
-    background:var(--phosphor);
-    box-shadow:0 0 10px 2px var(--phosphor-glow);
-  }
-  .nav-links{
-    display:flex; align-items:center; gap:34px;
-    list-style:none; margin:0; padding:0;
-  }
-  .nav-links a{
-    text-decoration:none;
-    color:var(--ink-dim);
-    font-size:14.5px;
-    font-weight:500;
-    transition:color 0.15s ease;
-  }
-  .nav-links a:hover{ color:var(--phosphor-soft); }
-  .nav-cta{ display:flex; align-items:center; gap:20px; }
-  .nav-toggle{
-    display:none;
-    background:none; border:1px solid var(--border-bright); border-radius:3px;
-    width:40px; height:40px;
-    color:var(--ink);
-    cursor:pointer;
-    align-items:center; justify-content:center;
-  }
-
-  @media (max-width: 880px){
-    .nav-links{
-      position:absolute; top:100%; left:0; right:0;
-      flex-direction:column; align-items:flex-start; gap:0;
-      background:var(--bg-charcoal);
-      border-bottom:1px solid var(--border);
-      max-height:0; overflow:hidden;
-      transition:max-height 0.25s ease;
-    }
-    .nav-links.open{ max-height:320px; }
-    .nav-links li{ width:100%; }
-    .nav-links a{ display:block; padding:16px 24px; border-top:1px solid var(--border); width:100%; }
-    .nav-cta .btn-ghost{ display:none; }
-    .nav-toggle{ display:inline-flex; }
-  }
-
-  /* ---------- Hero ---------- */
-  .hero{
-    position:relative;
-    overflow:hidden;
-    padding:96px 0 88px;
-    border-bottom:1px solid var(--border);
-  }
-  .hero-grid{
-    position:absolute; inset:0;
-    background-image:
-      linear-gradient(to right, rgba(69,255,155,0.055) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(69,255,155,0.055) 1px, transparent 1px);
-    background-size:44px 44px;
-    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 70% 30%, #000 10%, transparent 75%);
-            mask-image:radial-gradient(ellipse 70% 60% at 70% 30%, #000 10%, transparent 75%);
-  }
-  .hero-sweep{
-    position:absolute;
-    top:-30%; right:-18%;
-    width:760px; height:760px;
-    border-radius:50%;
-    background:conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--phosphor-glow) 340deg, transparent 360deg);
-    animation:spin 7s linear infinite;
-    opacity:0.8;
-  }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  .hero-rings{
-    position:absolute; top:-30%; right:-18%;
-    width:760px; height:760px;
-  }
-  .hero-rings::before, .hero-rings::after, .hero-rings i{
-    content:""; position:absolute; border:1px solid rgba(69,255,155,0.16); border-radius:50%;
-  }
-  .hero-rings::before{ inset:120px; }
-  .hero-rings::after{ inset:260px; }
-  .blip{
-    position:absolute;
-    width:7px; height:7px; border-radius:50%;
-    background:var(--phosphor);
-    box-shadow:0 0 12px 3px var(--phosphor-glow);
-    animation:pulse 2.4s ease-in-out infinite;
-  }
-  .blip.b1{ top:280px; right:420px; animation-delay:0s; }
-  .blip.b2{ top:150px; right:200px; animation-delay:0.7s; }
-  .blip.b3{ top:420px; right:150px; animation-delay:1.3s; }
-  .blip.dim{ background:var(--ink-faint); box-shadow:none; opacity:0.6; }
-  .blip.dim.b4{ top:200px; right:340px; animation-delay:0.3s; }
-  .blip.dim.b5{ top:360px; right:280px; animation-delay:1.6s; }
-  @keyframes pulse{
-    0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.9); opacity:0.35; }
-  }
-
-  .hero-inner{ position:relative; z-index:1; max-width:660px; }
-  .hero h1{
-    font-size:clamp(38px, 5.4vw, 62px);
-    margin-top:22px;
-    margin-bottom:22px;
-  }
-  .hero h1 em{
-    font-style:normal;
-    color:var(--phosphor);
-  }
-  .hero p.lead{
-    font-size:18px;
-    color:var(--ink-dim);
-    max-width:520px;
-    margin-bottom:38px;
-  }
-  .hero-actions{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:56px; }
-
-  .track-bar{
-    font-family:var(--font-mono);
-    font-size:12px;
-    color:var(--ink-faint);
-    letter-spacing:0.06em;
-    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
-  }
-  .track-bar strong{ color:var(--ink-dim); font-weight:600; }
-  .track-list{ display:flex; gap:14px; flex-wrap:wrap; }
-  .track-list span{
-    padding:5px 10px;
-    border:1px solid var(--border-bright);
-    border-radius:3px;
-    color:var(--ink-dim);
-  }
-
-  /* ---------- Sections generic ---------- */
-  section{ padding:100px 0; border-bottom:1px solid var(--border); }
-  section:last-of-type{ border-bottom:none; }
-  .section-head{ max-width:640px; margin-bottom:56px; }
-  .section-head h2{ font-size:clamp(28px,3.6vw,42px); margin-top:16px; }
-  .section-head p{ color:var(--ink-dim); font-size:16.5px; margin-top:16px; max-width:560px; }
-
-  .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.6s ease, transform 0.6s ease; }
-  .reveal.in{ opacity:1; transform:none; }
-
-  /* ---------- Shift comparison ---------- */
-  .shift-grid{
-    display:grid; grid-template-columns:1fr 1fr; gap:1px;
-    background:var(--border);
-    border:1px solid var(--border);
-    border-radius:6px;
-    overflow:hidden;
-  }
-  .shift-col{ background:var(--bg-charcoal); padding:32px; }
-  .shift-col h3{
-    font-family:var(--font-mono); font-size:13px; text-transform:uppercase; letter-spacing:0.1em;
-    font-weight:600; color:var(--ink-faint); margin-bottom:20px;
-  }
-  .shift-col.now h3{ color:var(--phosphor); }
-  .shift-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px; }
-  .shift-col li{ display:flex; gap:10px; font-size:15px; color:var(--ink-dim); }
-  .shift-col.now li{ color:var(--ink); }
-  .shift-col li .mark{ font-family:var(--font-mono); flex-shrink:0; }
-  .shift-col:not(.now) li .mark{ color:var(--ink-faint); }
-  .shift-col.now li .mark{ color:var(--phosphor); }
-  @media (max-width:720px){ .shift-grid{ grid-template-columns:1fr; } }
-
-  /* ---------- Services ---------- */
-  .service-grid{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:1px;
-    background:var(--border);
-    border:1px solid var(--border);
-    border-radius:6px;
-    overflow:hidden;
-  }
-  .service-card{
-    background:var(--bg-charcoal);
-    padding:32px 28px;
-    display:flex; flex-direction:column; gap:14px;
-    transition:background 0.2s ease;
-  }
-  .service-card:hover{ background:var(--bg-charcoal-2); }
-  .service-num{
-    font-family:var(--font-mono); font-size:12.5px; color:var(--phosphor-dim); letter-spacing:0.08em;
-  }
-  .service-card h3{ font-size:19px; }
-  .service-card p{ color:var(--ink-dim); font-size:14.5px; margin:0; }
-  @media (max-width:920px){ .service-grid{ grid-template-columns:1fr 1fr; } }
-  @media (max-width:600px){ .service-grid{ grid-template-columns:1fr; } }
-
-  /* ---------- Process ---------- */
-  .process-list{ display:flex; flex-direction:column; }
-  .process-item{
-    display:grid; grid-template-columns:110px 1fr; gap:32px;
-    padding:34px 0;
-    border-top:1px solid var(--border);
-    align-items:start;
-  }
-  .process-item:last-child{ border-bottom:1px solid var(--border); }
-  .process-step{
-    font-family:var(--font-mono); font-size:14px; color:var(--phosphor); letter-spacing:0.06em;
-    padding-top:4px;
-  }
-  .process-body h3{ font-size:22px; margin-bottom:10px; }
-  .process-body p{ color:var(--ink-dim); font-size:15.5px; max-width:560px; margin:0; }
-  @media (max-width:640px){
-    .process-item{ grid-template-columns:1fr; gap:10px; }
-  }
-
-  /* ---------- Why / stats ---------- */
-  .why-wrap{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px; align-items:start; }
-  .why-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:26px; }
-  .why-list li{ display:flex; gap:16px; }
-  .why-list .ico{
-    width:34px; height:34px; flex-shrink:0; border-radius:6px;
-    border:1px solid var(--phosphor-dim);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--phosphor);
-  }
-  .why-list h4{ font-size:16px; margin:0 0 4px; color:var(--ink); font-family:var(--font-body); font-weight:700; }
-  .why-list p{ margin:0; color:var(--ink-dim); font-size:14.5px; }
-
-  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:6px; overflow:hidden; }
-  .stat-card{ background:var(--bg-charcoal); padding:30px; }
-  .stat-num{ font-family:var(--font-mono); font-size:34px; font-weight:600; color:var(--phosphor); font-variant-numeric:tabular-nums; }
-  .stat-label{ color:var(--ink-dim); font-size:13.5px; margin-top:8px; }
-  @media (max-width:880px){ .why-wrap{ grid-template-columns:1fr; } }
-
-  /* ---------- Testimonials ---------- */
-  .quote-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
-  .quote-card{
-    background:var(--bg-charcoal);
-    border:1px solid var(--border);
-    border-radius:6px;
-    padding:30px;
-    display:flex; flex-direction:column; gap:20px;
-  }
-  .quote-mark{ color:var(--phosphor-dim); font-family:var(--font-display); font-size:32px; line-height:1; }
-  .quote-card p.q{ color:var(--ink); font-size:15px; line-height:1.65; margin:0; }
-  .quote-attr{ font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); letter-spacing:0.03em; }
-  @media (max-width:920px){ .quote-grid{ grid-template-columns:1fr; } }
-
-  /* ---------- FAQ ---------- */
-  .faq-list{ max-width:760px; }
-  .faq-item{ border-top:1px solid var(--border); }
-  .faq-item:last-child{ border-bottom:1px solid var(--border); }
-  .faq-q{
-    width:100%; text-align:left;
-    background:none; border:none; color:var(--ink);
-    font-family:var(--font-body); font-size:17px; font-weight:700;
-    padding:24px 4px; cursor:pointer;
-    display:flex; justify-content:space-between; align-items:center; gap:20px;
-  }
-  .faq-q:focus-visible{ outline:2px solid var(--phosphor); outline-offset:2px; }
-  .faq-q .plus{ font-family:var(--font-mono); color:var(--phosphor); font-size:20px; flex-shrink:0; transition:transform 0.2s ease; }
-  .faq-item[open] .faq-q .plus{ transform:rotate(45deg); }
-  .faq-a{ padding:0 4px 26px; color:var(--ink-dim); font-size:15px; max-width:640px; }
-  .faq-item summary{ list-style:none; }
-  .faq-item summary::-webkit-details-marker{ display:none; }
-
-  /* ---------- CTA banner ---------- */
-  .cta-banner{
-    position:relative;
-    background:var(--bg-charcoal);
-    border:1px solid var(--border-bright);
-    border-radius:10px;
-    padding:70px 48px;
-    text-align:center;
-    overflow:hidden;
-  }
-  .cta-banner::before{
-    content:"";
-    position:absolute; inset:0;
-    background:radial-gradient(ellipse 60% 90% at 50% 0%, var(--phosphor-glow), transparent 70%);
-    opacity:0.5;
-  }
-  .cta-banner-inner{ position:relative; z-index:1; }
-  .cta-banner h2{ font-size:clamp(28px,4vw,44px); margin-top:16px; }
-  .cta-banner p{ color:var(--ink-dim); font-size:16.5px; margin:16px auto 34px; max-width:480px; }
-
-  /* ---------- Footer ---------- */
-  footer{ padding:64px 0 40px; }
-  .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:48px; border-bottom:1px solid var(--border); margin-bottom:32px; }
-  .footer-brand p{ color:var(--ink-dim); font-size:14px; max-width:280px; margin-top:14px; }
-  .footer-cols{ display:flex; gap:64px; flex-wrap:wrap; }
-  .footer-col h5{
-    font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:0.1em;
-    color:var(--ink-faint); margin:0 0 16px; font-weight:600;
-  }
-  .footer-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px; }
-  .footer-col a{ text-decoration:none; color:var(--ink-dim); font-size:14.5px; transition:color 0.15s; }
-  .footer-col a:hover{ color:var(--phosphor-soft); }
-  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
-  .footer-bottom p{ color:var(--ink-faint); font-size:13px; margin:0; font-family:var(--font-mono); }
-
-  ::selection{ background:var(--phosphor); color:#03150c; }
-</style>
+<link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
 
 <header>
   <div class="wrap nav">
-    <a class="logo" href="#top">
+    <a class="logo" href="index.html">
       <span class="logo-dot"></span>
-      PHOSPHOR
+      SCANLINE
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#process">Process</a></li>
-      <li><a href="#why">Why Phosphor</a></li>
+      <li><a href="#services" aria-current="page">Services</a></li>
+      <li><a href="voice-automations.html">Voice Automations</a></li>
+      <li><a href="sales-consulting.html">Sales Consulting</a></li>
       <li><a href="#faq">FAQ</a></li>
-      <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="#contact">Log In</a>
@@ -471,7 +49,7 @@
     <div class="wrap hero-inner">
       <span class="eyebrow">AI Visibility &amp; GEO</span>
       <h1>Your next customer just asked AI about you. <em>Did you show up?</em></h1>
-      <p class="lead">Search split in two: the blue links, and the answer AI gives instead of them. Phosphor tracks, scores, and improves where your brand lands inside that answer — before your competitors get there first.</p>
+      <p class="lead">Search split in two: the blue links, and the answer AI gives instead of them. Scanline tracks, scores, and improves where your brand lands inside that answer — before your competitors get there first.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#contact">Request a Free Visibility Scan</a>
         <a class="btn btn-ghost" href="#process">See How It Works</a>
@@ -534,29 +112,44 @@
         </div>
         <div class="service-card">
           <span class="service-num">02</span>
+          <h3>Website Audit &amp; Rebuild</h3>
+          <p>We evaluate your current site for how well AI models can read it — then either optimize what's there or design and build a new one from the ground up.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-num">03</span>
           <h3>Generative Engine Optimization</h3>
           <p>Structural and content changes that make your site easier for AI models to read, trust, and cite by name.</p>
         </div>
         <div class="service-card">
-          <span class="service-num">03</span>
+          <span class="service-num">04</span>
           <h3>Competitor Intelligence</h3>
           <p>See exactly who AI recommends instead of you — and what they're doing differently that earns the mention.</p>
         </div>
         <div class="service-card">
-          <span class="service-num">04</span>
+          <span class="service-num">05</span>
           <h3>Content Gap Strategy</h3>
           <p>Targeted content briefs built to close the specific gaps keeping your brand out of the answer.</p>
         </div>
         <div class="service-card">
-          <span class="service-num">05</span>
+          <span class="service-num">06</span>
           <h3>Sentiment Monitoring</h3>
           <p>Track not just whether you're mentioned, but how — positive, neutral, or a warning sign worth acting on.</p>
         </div>
         <div class="service-card">
-          <span class="service-num">06</span>
+          <span class="service-num">07</span>
           <h3>Ongoing Reporting</h3>
           <p>A live dashboard and scheduled reports so you know the moment your visibility moves, in either direction.</p>
         </div>
+        <a class="service-card" href="voice-automations.html">
+          <span class="service-num">08 <span class="card-arrow" aria-hidden="true">→</span></span>
+          <h3>AI Voice Automation</h3>
+          <p>AI voice agents that answer your phones, qualify leads, and book appointments around the clock. Dedicated page.</p>
+        </a>
+        <a class="service-card" href="sales-consulting.html">
+          <span class="service-num">09 <span class="card-arrow" aria-hidden="true">→</span></span>
+          <h3>AI Sales Consulting</h3>
+          <p>We analyze your sales process in person and build custom systems that cut wasted time and cost. Dedicated page.</p>
+        </a>
       </div>
     </div>
   </section>
@@ -601,10 +194,10 @@
     </div>
   </section>
 
-  <section id="why" aria-label="Why Phosphor">
+  <section id="why" aria-label="Why Scanline">
     <div class="wrap">
       <div class="section-head reveal">
-        <span class="eyebrow">04 · Why Phosphor</span>
+        <span class="eyebrow">04 · Why Scanline</span>
         <h2>Built for a search engine that doesn't use ten blue links.</h2>
       </div>
       <div class="why-wrap reveal">
@@ -677,18 +270,18 @@
       <div class="quote-grid reveal">
         <div class="quote-card">
           <div class="quote-mark">"</div>
-          <p class="q">We had no idea we were invisible to ChatGPT until Phosphor showed us. A few months later, we're the first brand it mentions in our category.</p>
-          <div class="quote-attr">MARKETING LEAD — B2B SaaS</div>
+          <p class="q">We had no idea we were invisible to ChatGPT until Scanline showed us. A few months later, we're the first brand it mentions in our category.</p>
+          <div class="quote-attr">MARKETING LEAD — B2B SAAS</div>
         </div>
         <div class="quote-card">
           <div class="quote-mark">"</div>
-          <p class="q">Our old SEO agency didn't have a plan for AI search at all. Phosphor did, and the reporting made it obvious what was actually working.</p>
+          <p class="q">We were missing calls every week and didn't even know it. Now every one gets answered, qualified, and on our calendar before we've even seen the notification.</p>
           <div class="quote-attr">OWNER — HOME SERVICES</div>
         </div>
         <div class="quote-card">
           <div class="quote-mark">"</div>
-          <p class="q">I finally understand what's happening with our visibility instead of guessing. That alone changed how we plan content.</p>
-          <div class="quote-attr">GROWTH DIRECTOR — HEALTHCARE</div>
+          <p class="q">They didn't just hand us a report — they rebuilt how leads move through our pipeline and cut two tools we didn't need anymore.</p>
+          <div class="quote-attr">GROWTH DIRECTOR — HEALTHCARE GROUP</div>
         </div>
       </div>
     </div>
@@ -710,12 +303,12 @@
           <div class="faq-a">SEO optimizes for ranking algorithms and click-through. GEO optimizes for a language model deciding, in real time, which brands are trustworthy and specific enough to name. The two overlap, but ranking well on Google doesn't guarantee an AI model will mention you — we've seen both directions.</div>
         </details>
         <details class="faq-item">
-          <summary class="faq-q">Which AI platforms do you track? <span class="plus">+</span></summary>
-          <div class="faq-a">Every scan checks ChatGPT, Perplexity, Gemini, Google AI Overviews, and Copilot by default. We can add other platforms relevant to your industry on request.</div>
+          <summary class="faq-q">Do you build websites, or just optimize what's there? <span class="plus">+</span></summary>
+          <div class="faq-a">Both. If your site's foundation is solid, we optimize its structure and content for AI readability. If it isn't, we design and build a new one from scratch — either way, it ends up built to be read and cited by AI models, not just by people.</div>
         </details>
         <details class="faq-item">
-          <summary class="faq-q">How long until we see movement? <span class="plus">+</span></summary>
-          <div class="faq-a">It depends on your starting point and how much content and structural work is needed. Your first audit sets the baseline; most clients see measurable movement within the first couple of reporting cycles.</div>
+          <summary class="faq-q">Which AI platforms do you track? <span class="plus">+</span></summary>
+          <div class="faq-a">Every scan checks ChatGPT, Perplexity, Gemini, Google AI Overviews, and Copilot by default. We can add other platforms relevant to your industry on request.</div>
         </details>
         <details class="faq-item">
           <summary class="faq-q">Do we need to already rank well on Google? <span class="plus">+</span></summary>
@@ -732,7 +325,7 @@
           <span class="eyebrow">Get Started</span>
           <h2>Find out if AI even knows you exist.</h2>
           <p>A free visibility scan takes a few minutes to request and shows you exactly where your brand stands today — no commitment required.</p>
-          <a class="btn btn-primary" href="mailto:hello@phosphorvisibility.com">Request a Free Visibility Scan</a>
+          <a class="btn btn-primary" href="mailto:hello@scanlinevisibility.com">Request a Free Visibility Scan</a>
         </div>
       </div>
     </div>
@@ -744,77 +337,47 @@
   <div class="wrap">
     <div class="footer-top">
       <div class="footer-brand">
-        <a class="logo" href="#top">
+        <a class="logo" href="index.html">
           <span class="logo-dot"></span>
-          PHOSPHOR
+          SCANLINE
         </a>
-        <p>AI visibility and Generative Engine Optimization for brands that want to be the answer, not the tenth link.</p>
+        <p>AI visibility, voice automation, and sales process consulting for brands that want to be the answer, not the tenth link.</p>
       </div>
       <div class="footer-cols">
         <div class="footer-col">
-          <h5>Company</h5>
+          <h5>Solutions</h5>
           <ul>
-            <li><a href="#services">Services</a></li>
-            <li><a href="#process">Process</a></li>
-            <li><a href="#why">Why Phosphor</a></li>
+            <li><a href="index.html#services">AI Visibility &amp; GEO</a></li>
+            <li><a href="index.html#services">Website Audit &amp; Rebuild</a></li>
+            <li><a href="voice-automations.html">Voice Automations</a></li>
+            <li><a href="sales-consulting.html">Sales Consulting</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h5>Resources</h5>
+          <h5>Company</h5>
           <ul>
-            <li><a href="#faq">FAQ</a></li>
-            <li><a href="#testimonials">Client Stories</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="index.html#process">Process</a></li>
+            <li><a href="index.html#why">Why Scanline</a></li>
+            <li><a href="index.html#faq">FAQ</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h5>Contact</h5>
           <ul>
-            <li><a href="mailto:hello@phosphorvisibility.com">hello@phosphorvisibility.com</a></li>
+            <li><a href="mailto:hello@scanlinevisibility.com">hello@scanlinevisibility.com</a></li>
             <li><a href="tel:+15555550142">(555) 555-0142</a></li>
           </ul>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Phosphor Visibility. All rights reserved.</p>
+      <p>© 2026 Scanline Visibility. All rights reserved.</p>
       <p>Austin, TX</p>
     </div>
   </div>
 </footer>
 
-<script>
-  (function(){
-    var toggle = document.getElementById('navToggle');
-    var links = document.getElementById('navLinks');
-    toggle.addEventListener('click', function(){
-      var open = links.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-    links.querySelectorAll('a').forEach(function(a){
-      a.addEventListener('click', function(){
-        links.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
-    });
-
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var revealEls = document.querySelectorAll('.reveal');
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      revealEls.forEach(function(el){ el.classList.add('in'); });
-    } else {
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in');
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12 });
-      revealEls.forEach(function(el){ io.observe(el); });
-    }
-  })();
-</script>
+<script src="assets/site.js"></script>
 
 </body>
 </html>
