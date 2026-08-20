@@ -456,7 +456,9 @@ section:last-of-type{ border-bottom:none; }
 /* ---------- Footer ---------- */
 footer{ padding:64px 0 40px; }
 .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:48px; border-bottom:1px solid var(--border); margin-bottom:32px; }
-.footer-brand p{ color:var(--ink-dim); font-size:14px; max-width:280px; margin-top:14px; }
+.footer-logo-link{ display:inline-block; }
+.footer-logo{ width:170px; height:auto; }
+.footer-brand p{ color:var(--ink-dim); font-size:14px; max-width:280px; margin-top:16px; }
 .footer-cols{ display:flex; gap:64px; flex-wrap:wrap; }
 .footer-col h5{
   font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:0.1em;
