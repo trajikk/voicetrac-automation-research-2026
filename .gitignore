@@ -29,4 +29,4 @@ context-mode/node_modules/
 .cache/
 
 # claude-token-optimizer runtime session log (created by cto's Stop hook)
-.claude/sessions/
+**/.claude/sessions/
