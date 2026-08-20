@@ -7,21 +7,16 @@
   --ink: #eaeeec;
   --ink-dim: #949e98;
   --ink-faint: #5f6864;
-  --signal: #45ff9b;
-  --signal-soft: #a9ffcf;
-  --signal-dim: #1f8f57;
-  --signal-glow: rgba(69,255,155,0.35);
-
   --ember: #e8722a;
   --ember-soft: #ffb37a;
   --ember-dim: #8a4014;
   --ember-glow: rgba(232,114,42,0.4);
 
   /* legacy alias: general-purpose accent used by shared components below */
-  --accent: var(--signal);
-  --accent-soft: var(--signal-soft);
-  --accent-dim: var(--signal-dim);
-  --accent-glow: var(--signal-glow);
+  --accent: var(--ember);
+  --accent-soft: var(--ember-soft);
+  --accent-dim: var(--ember-dim);
+  --accent-glow: var(--ember-glow);
 
   --font-display: "Bricolage Grotesque", "Arial Black", sans-serif;
   --font-body: "Manrope", -apple-system, "Segoe UI", sans-serif;
@@ -135,11 +130,6 @@ header{
   text-decoration:none;
   color:var(--ink);
 }
-.logo-mark{
-  width:26px; height:26px;
-  object-fit:contain;
-  filter:drop-shadow(0 0 6px var(--ember-glow));
-}
 .nav-links{
   display:flex; align-items:center; gap:34px;
   list-style:none; margin:0; padding:0;
@@ -188,8 +178,8 @@ header{
 .hero-grid{
   position:absolute; inset:0;
   background-image:
-    linear-gradient(to right, rgba(69,255,155,0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(69,255,155,0.055) 1px, transparent 1px);
+    linear-gradient(to right, rgba(232,114,42,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(232,114,42,0.07) 1px, transparent 1px);
   background-size:44px 44px;
   -webkit-mask-image:radial-gradient(ellipse 70% 60% at 70% 30%, #000 10%, transparent 75%);
           mask-image:radial-gradient(ellipse 70% 60% at 70% 30%, #000 10%, transparent 75%);
@@ -209,7 +199,7 @@ header{
   width:760px; height:760px;
 }
 .hero-rings::before, .hero-rings::after, .hero-rings i{
-  content:""; position:absolute; border:1px solid rgba(69,255,155,0.16); border-radius:50%;
+  content:""; position:absolute; border:1px solid rgba(232,114,42,0.2); border-radius:50%;
 }
 .hero-rings::before{ inset:120px; }
 .hero-rings::after{ inset:260px; }
@@ -229,23 +219,6 @@ header{
 @keyframes pulse{
   0%,100%{ transform:scale(1); opacity:1; }
   50%{ transform:scale(1.9); opacity:0.35; }
-}
-
-.hero-layout{
-  position:relative; z-index:1;
-  display:flex; align-items:center; justify-content:space-between; gap:48px;
-}
-.hero-visual{
-  flex:0 0 auto;
-  width:380px; max-width:42vw;
-}
-.hero-visual video{
-  width:100%; height:auto; display:block;
-  filter:drop-shadow(0 0 44px var(--ember-glow));
-}
-@media (max-width:900px){
-  .hero-layout{ flex-direction:column; }
-  .hero-visual{ width:240px; max-width:60vw; order:-1; }
 }
 
 .hero-inner{ position:relative; z-index:1; max-width:660px; }
@@ -457,7 +430,7 @@ section:last-of-type{ border-bottom:none; }
 footer{ padding:64px 0 40px; }
 .footer-top{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:48px; border-bottom:1px solid var(--border); margin-bottom:32px; }
 .footer-logo-link{ display:inline-block; }
-.footer-logo{ width:170px; height:auto; }
+.footer-logo{ width:220px; height:auto; }
 .footer-brand p{ color:var(--ink-dim); font-size:14px; max-width:280px; margin-top:16px; }
 .footer-cols{ display:flex; gap:64px; flex-wrap:wrap; }
 .footer-col h5{
